@@ -1,4 +1,4 @@
-# Asterics AAC
+# Kiyamu AAC
 
 ![Asterics AAC use cases](docs/ag-use-cases.png)
 
