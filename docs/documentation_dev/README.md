@@ -1,3 +1,5 @@
+[සිංහල සංවර්ධක මාර්ගෝපදේශය](README.si.md) · [Kiyamu README](../../README.md)
+
 # Asterics AAC developer documentation
 
 This is the developer documentation for Asterics AAC, a web-based tool for augmented and alternative communication (AAC), media and smart home access.

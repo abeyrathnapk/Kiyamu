@@ -15,48 +15,7 @@
                     <li><a href="https://www.youtube.com/channel/UCVIQETg6tIMu3SdEHaIftIw/videos" target="_blank"><span>{{ $t('tutorialVideosOnYoutube') }}</span> <span>(Jim Luther, {{ 'lang.en' | translate }})</span></a></li>
                 </ul>
             </div>
-            <div class="row">
-                <h2>{{ $t('contactAndFeedback') }}</h2>
-                <span>{{ $t('ifYouEncounterAnErrorHaveSuggestions') }}</span>
-                <ul>
-                    <li>
-                        <i18n path="arasaacSupportSocialMedia" tag="span">
-                            <template v-slot:instagramLink>
-                                <a href="https://www.instagram.com/asterics_aac/" target="_blank">{{ $t('instagramAstericsGridPage') }}</a>
-                            </template>
-                            <template v-slot:facebookLink>
-                                <a href="https://www.facebook.com/asterics.aac.y.arasaac" target="_blank">{{ $t('facebookAstericsGridPage') }}</a>
-                            </template>
-                        </i18n>
-                        <span>({{ $t('lang.es') }}, {{ $t('lang.en') }}, {{ $t('lang.pt') }})</span>
-                    </li>
-                    <li>
-                        <i18n path="communityOnFacebookGroup" tag="span">
-                            <template v-slot:astericsGridFacebookGroup>
-                                <a href="https://www.facebook.com/groups/1550700782223677/" target="_blank">{{ $t('astericsGridFacebookGroup') }}</a>
-                            </template>
-                        </i18n>
-                        <span>({{ $t('lang.en') }})</span>
-                    </li>
-                    <li>
-                        <i18n path="foundBugReportGithubIssue" tag="span">
-                            <template v-slot:githubLink>
-                                <a href="https://github.com/asterics/Asterics-AAC/issues/new" target="_blank">{{ $t('createAnIssueOnGithub') }}</a>
-                            </template>
-                        </i18n>
-                        <span>({{ $t('lang.en') }})</span>
-                    </li>
-                    <li>
-                        <i18n path="specialRequestsSendEmail" tag="span">
-                            <template v-slot:foundationEmail>
-                                <a href="mailto:office@asterics-foundation.org">office@asterics-foundation.org</a>
-                            </template>
-                        </i18n>
-                        <span>({{ $t('lang.en') }}, {{ $t('lang.de') }})</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
+                    </div>
         <div class="bottom-spacer"></div>
     </div>
 </template>

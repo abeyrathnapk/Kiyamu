@@ -1,3 +1,41 @@
+# Kiyamu
+
+Kiyamu is a modified distribution of AsTeRICS AAC. See [attribution notices](NOTICE.md), [license](LICENSE), and [corresponding source requirements](SOURCE_CODE.md).
+
+Changes on 2026-11-01: Kiyamu application branding and install icons.
+
+## English
+
+Kiyamu is an augmentative and alternative communication (AAC) application built around customizable communication boards. It supports text-to-speech, recorded audio, accessible input methods, and local storage for offline use. Sinhala interface translation and Sinhala communication boards are planned; this documentation does not mean the app is already fully translated.
+
+### For developers
+
+- Install Node.js 22 (the version used by the existing CI workflow) and Yarn, then run `yarn install` in the project folder.
+- Run `npm run start` and open http://localhost:9095.
+- Run `npm test -- --runInBand` for tests and `npm run build` for tests plus a production build in `app/build`.
+- On Windows, if PowerShell blocks `npm.ps1`, use `npm.cmd` instead of `npm`.
+- Read the [Sinhala developer guide](docs/documentation_dev/README.si.md) and the [existing English developer documentation](docs/documentation_dev/README.md). The upstream documentation may be outdated in places.
+
+## සිංහල
+
+**කියමු (Kiyamu)** යනු අදහස් ප්‍රකාශ කිරීමට සහ සන්නිවේදනය කිරීමට සහාය වන AAC යෙදුමකි. අවශ්‍යතාව අනුව වෙනස් කළ හැකි සන්නිවේදන පුවරු, අකුරු කථනයට හැරවීම (Text-to-Speech), පටිගත කළ හඬ සහ විවිධ ප්‍රවේශ ක්‍රම මෙහි ඇත. දත්ත උපාංගයේ ගබඩා කර අන්තර්ජාල සම්බන්ධතාවක් නොමැතිව ද යෙදුම භාවිත කළ හැක.
+
+සිංහල අතුරුමුහුණත සහ සිංහල සන්නිවේදන පුවරු සකස් කිරීම ඉදිරි වැඩ කොටසකි. මෙම ලේඛනය එක් කිරීමෙන් යෙදුම සම්පූර්ණයෙන් සිංහලට පරිවර්තනය වී ඇති බව අදහස් නොවේ. සිංහල හඬ ලබාගත හැකි ආකාරය උපාංගයේ ඇති හඬ, බාහිර TTS සේවාව හෝ පටිගත කළ හඬ මත රඳා පවතී.
+
+### සංවර්ධකයන් සඳහා
+
+1. Node.js 22 සහ Yarn ස්ථාපනය කරන්න. ව්‍යාපෘති ෆෝල්ඩරය තුළ `yarn install` ක්‍රියාත්මක කරන්න.
+2. `npm run start` ක්‍රියාත්මක කර බ්‍රවුසරයෙන් http://localhost:9095 විවෘත කරන්න.
+3. පරීක්ෂණ සඳහා `npm test -- --runInBand` භාවිත කරන්න.
+4. පරීක්ෂණ සහ නිෂ්පාදන build එක සඳහා `npm run build` භාවිත කරන්න. සකස් කළ ගොනු `app/build` තුළ ලැබේ.
+5. Windows PowerShell මඟින් `npm.ps1` අවහිර කළහොත් `npm` වෙනුවට `npm.cmd` භාවිත කරන්න.
+
+වැඩි විස්තර සඳහා [සිංහල සංවර්ධක මාර්ගෝපදේශය](docs/documentation_dev/README.si.md) සහ [ඉංග්‍රීසි සංවර්ධක ලේඛන](docs/documentation_dev/README.md) බලන්න.
+
+Kiyamu යනු AsTeRICS AAC මත පදනම් වූ වෙනස් කළ අනුවාදයකි. මුල් කර්තෘ සඳහන් කිරීම් සහ බලපත්‍ර තොරතුරු සඳහා [NOTICE.md](NOTICE.md), [LICENSE](LICENSE) සහ [SOURCE_CODE.md](SOURCE_CODE.md) බලන්න.
+
+## Upstream documentation and acknowledgements
+
 # Kiyamu AAC
 
 ![Asterics AAC use cases](docs/ag-use-cases.png)
