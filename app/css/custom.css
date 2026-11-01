@@ -338,3 +338,34 @@ nav #helpButton:focus {
     }
     @page { size: landscape; }
 }
+
+/* Local font keeps Sinhala letters and vowel signs available offline. */
+@font-face {
+    font-family: "Noto Sans Sinhala";
+    src: url("../fonts/ttf/NotoSansSinhala.ttf") format("truetype");
+    font-weight: 100 900;
+    font-display: swap;
+}
+html[lang="si"] body,
+html[lang="si"] button,
+html[lang="si"] input,
+html[lang="si"] select,
+html[lang="si"] textarea,
+html[lang="si"] h1,
+html[lang="si"] h2,
+html[lang="si"] h3,
+html[lang="si"] h4,
+.sentence-example,
+.kiyamu-wordmark {
+    font-family: "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+    letter-spacing: normal;
+}
+html[lang="si"] .element-container,
+.element-container[lang="si"] {
+    font-family: "Noto Sans Sinhala", "Iskoola Pota", sans-serif !important;
+    letter-spacing: normal;
+}
+html[lang="si"] button { white-space: normal; height: auto; min-height: 44px; line-height: 1.65; }
+
+/* Match measured and rendered weight so Sinhala labels fit their cells. */
+.element-container[lang="si"] .grid-item-content { font-weight: 700; }

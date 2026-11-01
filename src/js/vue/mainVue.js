@@ -36,7 +36,7 @@ MainVue.setTooltip = function (html, options) {
     if (!app) {
         return;
     }
-    if (app.uiLocked) {
+    if (app.uiLocked && !(options && options.showWhenLocked)) {
         app.hiddenPopupData = {
             html: html,
             options: options

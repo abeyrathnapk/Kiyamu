@@ -1,5 +1,6 @@
 <template>
     <div class="p-4">
+        <sinhala-starter-card/>
         <h2 class="my-3">{{ $t('chooseHowToStart') }}</h2>
         <div class="container-fluid">
             <div class="mt-2 mb-5 row">
@@ -65,8 +66,10 @@
     import { MainVue } from '../../js/vue/mainVue';
     import ConfigPreviewDetail from '../modals/configPreviewDetail.vue';
 
+    import SinhalaStarterCard from './sinhalaStarterCard.vue';
+
     export default {
-        components: { ConfigPreviewDetail, Accordion },
+        components: { ConfigPreviewDetail, Accordion, SinhalaStarterCard },
         props: ["restoreBackupHandler", "importCustomHandler", "resetGlobalGrid"],
         data() {
             return {

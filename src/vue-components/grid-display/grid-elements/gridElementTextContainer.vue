@@ -64,9 +64,14 @@ export default {
             }
             let size = this.containerSize;
             this.lineHeight = this.withImage ? this.metadata.textConfig.lineHeight : this.metadata.textConfig.onlyTextLineHeight;
+            const sinhalaStarter = this.gridElement && this.gridElement.additionalProps && this.gridElement.additionalProps.sinhalaStarter;
             this.maxLines = this.withImage ? this.metadata.textConfig.maxLines : 100;
+            if (sinhalaStarter) {
+                this.lineHeight = Math.max(this.lineHeight, 1.6);
+                this.maxLines = Math.max(this.maxLines, 2);
+            }
             this.fontSizePx = this.getFontSizePx(size);
-            this.maxTextContainerHeight = this.withImage ? (this.fontSizePx * this.lineHeight * this.metadata.textConfig.maxLines) + 'px' : '100%';
+            this.maxTextContainerHeight = this.withImage ? (this.fontSizePx * this.lineHeight * this.maxLines) + 'px' : '100%';
             this.textOverflow = this.metadata.textConfig.fittingMode === TextConfig.TOO_LONG_ELLIPSIS ? 'ellipsis' : 'clip';
             this.whiteSpaceWrap = this.maxLines === 1 ? 'nowrap' : 'normal';
             this.ready = true;
@@ -78,7 +83,7 @@ export default {
             let kbdContainerPct = 80;
             this.txtMargin = TEXT_MARGIN;
             if (document.documentElement.clientWidth < MOBILE_MAX_WIDTH) {
-                this.txtMargin = 0;
+                this.txtMargin = this.gridElement && this.gridElement.additionalProps && this.gridElement.additionalProps.sinhalaStarter ? 4 : 0;
                 kbdContainerPct = 100;
             }
             if (this.metadata.textConfig.fittingMode === TextConfig.TOO_LONG_AUTO && realWidth > size.width - 2 * this.txtMargin) {

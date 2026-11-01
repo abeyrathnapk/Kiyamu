@@ -1,3 +1,4 @@
+import { removeLastGrapheme } from '../util/sinhalaText';
 import $ from '../externals/jquery.js';
 import { GridElement } from '../model/GridElement';
 import { speechService } from './speechService';
@@ -96,7 +97,8 @@ collectElementService.clearCollectElements = function() {
  * @returns {Promise<void>}
  */
 collectElementService.doARASAACGrammarCorrection = async function() {
-    if (activateARASAACGrammarAPI) {
+    // Preserve the child's Sinhala words; this grammar service is not enabled for Sinhala.
+    if (activateARASAACGrammarAPI && i18nService.getContentLangBase() !== 'si') {
         let speakText = getPrintText({ inlcudeCorrectedGrammar: false });
         speakText = await arasaacService.getCorrectGrammar(speakText);
         let changed = applyGrammarCorrection(speakText);
@@ -180,7 +182,7 @@ collectElementService.doCollectElementActions = async function (action, gridElem
             let lastElem = getLastElement();
             if (lastElem && lastElem.onlyText) {
                 let label = getLabel(lastElem);
-                label = label.slice(0, -1);
+                label = removeLastGrapheme(label);
                 if (label) {
                     setLabel(lastElem, label);
                 } else {

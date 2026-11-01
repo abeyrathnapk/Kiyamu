@@ -6,6 +6,7 @@ const namesMustSkip = ['convertOriginalToTranslateObjects.js', '/examples/transl
 let startDir = path.resolve(__dirname, '../app');
 const basePath = path.resolve(__dirname, '..');   // one level above your script
 const outputFile = path.resolve(__dirname, '../serviceWorkerCachePaths.js');
+const requiredOfflineFiles = new Set(['app/lang/i18n.si.json', 'app/lang/i18n.en.json', 'app/fonts/ttf/NotoSansSinhala.ttf']);
 let printPaths = ['./', 'index.html', 'LICENSE', 'NOTICE.md', 'SOURCE_CODE.md'];
 
 
@@ -20,7 +21,7 @@ function traverseDir(dir) {
             let mustInclude = namesMustInclude.reduce((total, current) => total || logPath.indexOf(current) !== -1, false);
             let shouldSkip = namesToSkip.reduce((total, current) => total || logPath.indexOf(current) !== -1, false);
             let mustSkip = namesMustSkip.reduce((total, current) => total || logPath.indexOf(current) !== -1, false);
-            if (mustSkip || (!mustInclude && shouldSkip)) {
+            if (!requiredOfflineFiles.has(logPath) && (mustSkip || (!mustInclude && shouldSkip))) {
                 return;
             }
             if (logPath.indexOf('/examples/') !== -1 && logPath.indexOf('/examples/translations/') === -1 && logPath.indexOf('default.grd.json') === -1) {

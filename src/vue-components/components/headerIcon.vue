@@ -3,7 +3,7 @@
         <div>
             <div v-if="show">
                 <a tabindex="20" href="javascript:void(0)" :aria-label="$t('openSidebar')" @click="openSidebar()" style="margin: 0.2em 1em 0 0.5em; color: #266697;"><i class="fas fa-2x fa-bars inline"></i></a>
-                <a tabindex="21" aria-hidden="true" href="#main" class="hide-mobile"><h1 class="inline"><span style="font-size: 1.5rem; font-weight: 700; color: #146b60">Kiyamu</span></h1></a>
+                <a tabindex="21" aria-hidden="true" href="#main" class="hide-mobile"><h1 class="inline"><span lang="si" class="kiyamu-wordmark" style="font-size: 1.5rem; font-weight: 700; color: #146b60">කියමු</span></h1></a>
             </div>
             <a tabindex="22" aria-hidden="true" href="#main" class="show-mobile"><h1 class="inline"><img id="astericsIcon" src="app/img/kiyamu-icon.svg" alt="Kiyamu" style="margin: 0"/></h1></a>
         </div>

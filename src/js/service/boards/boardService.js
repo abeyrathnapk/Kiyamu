@@ -59,9 +59,10 @@ boardService.getPreview = function(filename) {
 async function init() {
     try {
         await fetchData();
-        initResolve();
     } catch (e) {
         log.warn(e);
+    } finally {
+        initResolve();
     }
 }
 init();

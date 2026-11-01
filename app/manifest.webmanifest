@@ -1,6 +1,6 @@
 {
-  "name": "Kiyamu",
-  "short_name": "Kiyamu",
+  "name": "කියමු · Kiyamu",
+  "short_name": "කියමු",
   "start_url": "../",
   "id": "/",
   "display": "standalone",
@@ -19,5 +19,6 @@
       "src": "img/app-icons/kiyamu-maskable.png",
       "type": "image/png"
     }
-  ]
+  ],
+  "lang": "si"
 }

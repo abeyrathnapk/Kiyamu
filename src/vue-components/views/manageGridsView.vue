@@ -44,6 +44,7 @@
 
             <div>
                 <h1>{{ $t('gridList') }}</h1>
+                <sinhala-starter-card compact/>
                 <div class="srow" v-show="graphList.length > 0" style="margin-bottom: 1em">
                     <label for="selectMode" class="three columns">{{ $t('gridsToShow') }}</label>
                     <select id="selectMode" class="four columns" v-model="selectValue" @change="reinitContextMenu">
@@ -114,6 +115,7 @@
 </template>
 
 <script>
+    import SinhalaStarterCard from '../components/sinhalaStarterCard.vue';
     import $ from '../../js/externals/jquery.js';
     import {dataService} from "../../js/service/data/dataService";
     import {GridData} from "../../js/model/GridData.js";
@@ -153,7 +155,7 @@
 
     let vueApp = null;
     let vueConfig = {
-        components: {
+        components: { SinhalaStarterCard,
             NoGridsPage, ImportModal, ExportModal, ExportPdfModal, GridLinkModal, Accordion, HeaderIcon},
         data() {
             return {

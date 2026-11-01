@@ -15,6 +15,7 @@ let currentAppLang = localStorageService.getAppSettings().appLang;
 let predefActionsI18nData = {};
 
 let appLanguages = [
+    'si',
     'en',
     'de',
     'ar',
@@ -56,8 +57,9 @@ i18nService.getVueI18n = async function () {
         messages: {}
     });
     await loadLanguage(fallbackLang);
-    await getPredefinedActionTranslations(fallbackLang);
-    await getPredefinedActionTranslations();
+    // Optional remote labels must not delay offline app startup.
+    getPredefinedActionTranslations(fallbackLang);
+    getPredefinedActionTranslations();
     getUserSettings();
     return i18nService.setAppLanguage(i18nService.getAppLang(), true, true).then(() => {
         return Promise.resolve(vueI18n);
@@ -85,7 +87,7 @@ i18nService.getContentLangReadable = function () {
 };
 
 i18nService.getAppLang = function () {
-    return i18nService.getCustomAppLang() || i18nService.getBrowserLang();
+    return i18nService.getCustomAppLang() || 'si';
 };
 
 i18nService.getCustomAppLang = function () {
@@ -116,9 +118,9 @@ i18nService.setAppLanguage = async function (lang, dontSave, force) {
     if (!dontSave) {
         localStorageService.saveAppSettings({appLang: lang});
     }
-    currentAppLang = lang || i18nService.getBrowserLang();
+    currentAppLang = lang || 'si';
     $('html').prop('lang', currentAppLang);
-    await getPredefinedActionTranslations();
+    getPredefinedActionTranslations();
     return loadLanguage(currentAppLang).then(() => {
         vueI18n.locale = currentAppLang;
         allLanguages.sort((a, b) => a[currentAppLang].toLowerCase().localeCompare(b[currentAppLang].toLowerCase()));

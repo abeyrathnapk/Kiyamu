@@ -2,11 +2,19 @@
 
 Kiyamu is a modified distribution of AsTeRICS AAC. See [attribution notices](NOTICE.md), [license](LICENSE), and [corresponding source requirements](SOURCE_CODE.md).
 
-Changes on 2026-11-01: Kiyamu application branding and install icons.
+Changes on 2026-11-01: Kiyamu branding, Sinhala interface, child-focused starter boards, offline picture symbols and Sinhala font.
 
 ## English
 
-Kiyamu is an augmentative and alternative communication (AAC) application built around customizable communication boards. It supports text-to-speech, recorded audio, accessible input methods, and local storage for offline use. Sinhala interface translation and Sinhala communication boards are planned; this documentation does not mean the app is already fully translated.
+Kiyamu is an augmentative and alternative communication (AAC) application built around customizable communication boards. It supports text-to-speech, recorded audio, accessible input methods, and local storage for offline use. The interface now includes Sinhala, with seven editable starter boards for young children and caregivers: everyday words, food and drink, feelings, play, personal needs, people and places, and conversation. Start with “සිංහලෙන් පටන් ගමු”. Existing profiles can add the boards from Manage grids.
+
+### Sinhala communication boards
+
+Build phrases in the order the child chooses, for example **මට → වතුර → ඕනේ**. Buttons keep stable positions; help, refusal, and toilet needs can be spoken immediately. New child profiles open with editing locked; caregivers can use the existing unlock control to personalize boards. Existing boards are preserved and are not automatically translated or rearranged.
+
+The font and starter illustrations are bundled for offline use. Speech still needs an available Sinhala device voice, a working online/external provider, or recorded button audio. No Sinhala speech model or recordings are bundled. The app warns when no usable Sinhala voice is available and does not send Sinhala text to an English voice.
+
+Read [සිංහල: දරුවා එක්ක භාවිත කරන හැටි](docs/documentation_user/sinhala-starter.md). Families should personalize vocabulary, photos and recordings; these starter boards have not been validated with children or Sinhala-speaking AAC specialists.
 
 ### For developers
 
@@ -20,7 +28,7 @@ Kiyamu is an augmentative and alternative communication (AAC) application built 
 
 **කියමු (Kiyamu)** යනු අදහස් ප්‍රකාශ කිරීමට සහ සන්නිවේදනය කිරීමට සහාය වන AAC යෙදුමකි. අවශ්‍යතාව අනුව වෙනස් කළ හැකි සන්නිවේදන පුවරු, අකුරු කථනයට හැරවීම (Text-to-Speech), පටිගත කළ හඬ සහ විවිධ ප්‍රවේශ ක්‍රම මෙහි ඇත. දත්ත උපාංගයේ ගබඩා කර අන්තර්ජාල සම්බන්ධතාවක් නොමැතිව ද යෙදුම භාවිත කළ හැක.
 
-සිංහල අතුරුමුහුණත සහ සිංහල සන්නිවේදන පුවරු සකස් කිරීම ඉදිරි වැඩ කොටසකි. මෙම ලේඛනය එක් කිරීමෙන් යෙදුම සම්පූර්ණයෙන් සිංහලට පරිවර්තනය වී ඇති බව අදහස් නොවේ. සිංහල හඬ ලබාගත හැකි ආකාරය උපාංගයේ ඇති හඬ, බාහිර TTS සේවාව හෝ පටිගත කළ හඬ මත රඳා පවතී.
+දැන් සිංහල අතුරුමුහුණතක් සහ දරුවන්ට හා ඔවුන්ට සහාය දෙන අයට භාවිත කළ හැකි ආරම්භක පුවරු හතක් ඇත. “සිංහලෙන් පටන් ගමු” තෝරන්න. කෑම බීම, හැඟීම්, සෙල්ලම්, දෛනික අවශ්‍යතා, අය හා තැන් සහ කතාබහ සඳහා ආරම්භක කොටු 84ක් ඇත. සිංහල හඬ ලබාගත හැකි ආකාරය උපාංගයේ ඇති හඬ, බාහිර TTS සේවාව හෝ පටිගත කළ හඬ මත රඳා පවතී.
 
 ### සංවර්ධකයන් සඳහා
 

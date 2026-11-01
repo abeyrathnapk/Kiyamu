@@ -1344,5 +1344,19 @@
   "exportMode": "Export mode",
   "PDF_EXPORTMODE_NORMAL": "Normal",
   "PDF_EXPORTMODE_RESIZE": "Resize elements",
-  "elementSize": "Element size"
+  "elementSize": "Element size",
+  "sinhalaStarterTitle": "Kiyamu — let’s talk together",
+  "sinhalaStarterDescription": "Everyday Sinhala picture boards for children and caregivers. Say what you want, share feelings, play, and ask for help.",
+  "startSinhala": "Start in Sinhala",
+  "addSinhalaBoards": "Add Sinhala starter boards",
+  "sinhalaStarterHint": "Build a sentence: මට → වතුර → ඕනේ (I want water).",
+  "sinhalaStarterError": "The Sinhala boards could not be prepared. Please try again.",
+  "sinhalaVoiceUnavailable": "A Sinhala voice is not available right now. Check your connection or choose a Sinhala voice in Language settings. You can also record audio for each button.",
+  "testSinhalaVoice": "Try the Sinhala voice",
+  "sinhalaVoiceHint": "Check the voice before use. Some Sinhala voices need an internet connection. Recorded button audio can work offline.",
+  "sinhalaCaregiverGuide": "Using the boards with your child",
+  "sinhalaLanguageChoice": "Language / භාෂාව",
+  "sinhalaCaregiverHint": "Point to a few words as you talk, then give your child time. Accept “no” and “stop”. Keep familiar buttons in the same place. Add family photos and recorded voices that your child recognizes.",
+  "sinhalaAndroidVoiceTitle": "Set up an Android Sinhala voice",
+  "sinhalaAndroidVoiceSteps": "In Android settings, open Text-to-speech output and choose Google’s speech engine. Open its settings, then Install voice data → Sinhala (Sri Lanka). Download it, reopen Kiyamu, and test the Sinhala voice. Then test again in airplane mode. Menu names and voice availability vary by device."
 }

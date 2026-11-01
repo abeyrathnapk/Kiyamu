@@ -4,6 +4,7 @@
         <div class="container ms-0">
             <div class="row ps-2 ps-sm-3 ps-md-4 col-12 col-md-10 col-xl-8">
                 <h2><span class="show-mobile">Kiyamu - </span><span>{{ $t('welcome') }}</span></h2>
+                <sinhala-starter-card :create-user="true"/>
                 <div>
                     <h3>
                         <i18n path="useAstericsGridWithoutRegistrationBold" tag="span">
@@ -74,8 +75,10 @@
     import {helpService} from "../../js/service/helpService";
     import {loginService} from "../../js/service/loginService";
 
+    import SinhalaStarterCard from '../components/sinhalaStarterCard.vue';
+
     export default {
-        components: {HeaderIcon},
+        components: {HeaderIcon, SinhalaStarterCard},
         props: [],
         data() {
             return {
