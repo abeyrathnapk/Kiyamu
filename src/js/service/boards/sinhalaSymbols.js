@@ -115,6 +115,7 @@ const symbols = {
 
 // Fixed toolbar aliases share the same visual vocabulary as the body cells.
 symbols.check = symbols.yes;
+symbols.eat = path('M13 88 Q13 61 37 61 Q61 61 61 88 Z', teal) + circle(37, 34, 23, peach) + dot(29, 29) + dot(43, 29) + circle(43, 45, 5, ink) + path('M59 45 L88 57', 'none', ink, 5) + path('M46 42 Q55 36 64 43 Q61 52 50 49 Z', gold);
 symbols['hand-paper'] = symbols.no;
 symbols['hands-helping'] = symbols.help;
 symbols['volume-up'] = path('M12 36 L29 36 L48 20 L48 77 L29 61 L12 61 Z', gold) + path('M62 35 Q75 48 62 62 M73 23 Q96 48 73 74', 'none', teal, 5);

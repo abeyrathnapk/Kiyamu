@@ -1,8 +1,8 @@
 # කියමු — සිංහල ආරම්භක පුවරු
 
-වාක්‍යය පෙන්වන ඉහළ පේළියේ දකුණු පැත්තේ **කියන්න**, **එකක් මකන්න**, **සියල්ල මකන්න** බොත්තම් තිබෙනවා. **වැසිකිළිය** බොත්තම **මුලට**, **ඔව්**, **නෑ**, **උදව්** සමඟ ඊළඟ පේළියේ තිබෙනවා.
+වාක්‍යය පෙන්වන ඉහළ පේළියේ දකුණු පැත්තේ **කියන්න**, **එකක් මකන්න**, **සියල්ල මකන්න** බොත්තම් තිබෙනවා. “කියමු 24” මුල් පුවරුවේ කොටු 24ක් තීරු හතරක තිබෙනවා. වතුර, බත්, ඕනේ, එපා, උදව් සහ වැසිකිළිය වැනි දේ එතැනින්ම කියන්න පුළුවන්.
 
-The sentence controls sit at the right end of the top message bar. Toilet is in the quick-access row below it. Existing starter boards with the original layout update when reopened; personalized words, pictures and speech actions are preserved. Manually rearranged layouts remain unchanged.
+The sentence controls sit at the right end of the top message bar. The new Sinhala core home contains 24 vocabulary/navigation tiles in four columns and six rows, with six category pages for more words. Existing starter boards with the original layout update when reopened; personalized words, pictures and speech actions are preserved. Manually rearranged layouts remain unchanged.
 
 ## දරුවාට තමන්ගේ අදහස කියන්න ඉඩ දෙමු
 
@@ -22,7 +22,8 @@ The sentence controls sit at the right end of the top message bar. Toilet is in 
 
 | පුවරුව | තෝරන වචන | ප්‍රකාශය |
 | --- | --- | --- |
-| කෑම බීම | මට → වතුර → ඕනේ | මට වතුර ඕනේ |
+| කියමු 24 / කෑම බීම | මට → වතුර → ඕනේ | මට වතුර ඕනේ |
+| කියමු 24 | මම → බත් → කනවා | මම බත් කනවා |
 | කෑම බීම | මට → බත් → එපා | මට බත් එපා |
 | සෙල්ලම් කරමු | මම → සෙල්ලම් → කරනවා | මම සෙල්ලම් කරනවා |
 | අය සහ තැන් | මම → ගෙදර → යනවා | මම ගෙදර යනවා |
@@ -31,7 +32,7 @@ The sentence controls sit at the right end of the top message bar. Toilet is in 
 
 ## පුවරු හත
 
-- **කියමු:** නිතර භාවිත කරන වචන සහ අනෙකුත් පුවරු වෙත යන බොත්තම්.
+- **කියමු 24:** නිතර භාවිත කරන වචන සහ අනෙකුත් පුවරු වෙත යන බොත්තම්.
 - **කෑම බීම:** වතුර, බත්, කිරි, පාන්, කෙසෙල්, තව, ඕනේ සහ එපා.
 - **මට දැනෙන දේ:** සතුට, දුක, තරහ, බය, වේදනාව, මහන්සිය සහ නිහඬ තැනක් අවශ්‍ය බව කියන්න.
 - **සෙල්ලම් කරමු:** සෙල්ලම්, බෝලෙ, සින්දු, පොත, චිත්‍ර සහ එළියට යෑම.
@@ -78,3 +79,9 @@ The [AsTeRICS Google Voices table](https://www.asterics.eu/manuals/asterics-grid
 ## පුවරු වෙනස් කරන්න අගුළ අරින්නේ කොහොමද?
 
 අලුත් දරුවෙකුගේ පුවරු මුලින්ම වෙනස් කිරීම අගුළු දමා විවෘත වේ. පුවරු වෙනස් කිරීමට ඉහළ අගුළු බොත්තම ඉක්මනින් අට වරක් තෝරන්න. වාර අතර තත්පර තුනකට වඩා නතර වුණොත් ගණන නැවත පටන් ගනී. ඔබ කලින් රහස් අංකයක් සකසා තිබේ නම් එය ඉල්ලයි. පසුව වෙනස් කිරීම් කර නැවත අගුළු දමන්න.
+
+## Quick Core 24 වෙනුවට කියමු 24
+
+පැරණි මුල් පුවරුව “Quick Core 24” නම් යෙදුම නැවත විවෘත කළ විට “කියමු 24” මුල් පුවරුව ලෙස තෝරාගනී. පැරණි පුවරු මැකෙන්නේ නැහැ; “පුවරු කළමනාකරණය” තුළ ඒවා තිබෙනවා. ඔබ වෙනම මුල් පුවරුවක් තෝරා තිබේ නම් එය වෙනස් කරන්නේ නැහැ.
+
+The replacement adapts the 24-cell core idea for everyday Sinhala and young children; it is not a word-for-word translation of all 50 pages in the upstream [OpenAAC Quick Core 24 set](https://github.com/asterics/Asterics-AAC-Data/tree/main/communicators/Quick%20Core%2024). English helper words such as “to”, “is” and “the” are replaced with useful Sinhala forms and familiar requests. “මට”, “වතුර”, “ඕනේ” and “මම”, “බත්”, “කනවා” can be selected in natural order. The replacement uses Kiyamu’s original bundled symbols, preserves existing English boards and their credits, and avoids downloading the English set during Sinhala setup.

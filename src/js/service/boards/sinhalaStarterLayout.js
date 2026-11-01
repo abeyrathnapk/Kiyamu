@@ -5,6 +5,14 @@ export const SINHALA_GRID_PREFIX = 'grid-data-kiyamu-si-v1-';
  * is persisted through the normal save path when the board is next edited.
  */
 export function upgradeSinhalaStarterLayout(grid) {
+    if (grid?.id?.startsWith(SINHALA_GRID_PREFIX)) {
+        for (const element of grid.gridElements || []) {
+            if (!element.additionalProps?.sinhalaStarter || !element.id.endsWith('-home') || element.id.includes('-content-')) continue;
+            for (const action of element.actions || []) {
+                if (action.modelName === 'GridActionNavigate' && action.toGridId === SINHALA_GRID_PREFIX + 'home') action.toGridId = SINHALA_GRID_PREFIX + 'core24';
+            }
+        }
+    }
     if (!grid || !grid.id?.startsWith(SINHALA_GRID_PREFIX) || grid.minColumnCount !== 4 || grid.rowCount !== 6 || grid.gridElements?.length !== 21) return false;
     const prefix = 'grid-element-kiyamu-si-' + grid.id.slice(SINHALA_GRID_PREFIX.length) + '-';
     const controls = {sentence:[0,0,4], home:[0,1,1], yes:[1,1,1], no:[2,1,1], help:[3,1,1], speak:[0,5,1], undo:[1,5,1], clear:[2,5,1], toilet:[3,5,1]};

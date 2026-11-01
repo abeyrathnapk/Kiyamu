@@ -6,7 +6,7 @@ Changes on 2026-11-01: Kiyamu branding, Sinhala interface, child-focused starter
 
 ## English
 
-Kiyamu is an augmentative and alternative communication (AAC) application built around customizable communication boards. It supports text-to-speech, recorded audio, accessible input methods, and local storage for offline use. The interface now includes Sinhala, with seven editable starter boards for young children and caregivers: everyday words, food and drink, feelings, play, personal needs, people and places, and conversation. Start with “සිංහලෙන් පටන් ගමු”. Existing profiles can add the boards from Manage grids.
+Kiyamu is an augmentative and alternative communication (AAC) application built around customizable communication boards. It supports text-to-speech, recorded audio, accessible input methods, and local storage for offline use. The interface now includes Sinhala, with a 24-cell Sinhala core home board and six editable category boards for young children and caregivers: everyday words, food and drink, feelings, play, personal needs, people and places, and conversation. Start with “සිංහලෙන් පටන් ගමු”. Profiles whose saved home is Quick Core 24 switch to the Sinhala core on reopening; their previous boards remain available in Manage grids. Existing profiles can add the boards from Manage grids.
 
 ### Sinhala communication boards
 
@@ -28,7 +28,7 @@ Read [සිංහල: දරුවා එක්ක භාවිත කරන �
 
 **කියමු (Kiyamu)** යනු අදහස් ප්‍රකාශ කිරීමට සහ සන්නිවේදනය කිරීමට සහාය වන AAC යෙදුමකි. අවශ්‍යතාව අනුව වෙනස් කළ හැකි සන්නිවේදන පුවරු, අකුරු කථනයට හැරවීම (Text-to-Speech), පටිගත කළ හඬ සහ විවිධ ප්‍රවේශ ක්‍රම මෙහි ඇත. දත්ත උපාංගයේ ගබඩා කර අන්තර්ජාල සම්බන්ධතාවක් නොමැතිව ද යෙදුම භාවිත කළ හැක.
 
-දැන් සිංහල අතුරුමුහුණතක් සහ දරුවන්ට හා ඔවුන්ට සහාය දෙන අයට භාවිත කළ හැකි ආරම්භක පුවරු හතක් ඇත. “සිංහලෙන් පටන් ගමු” තෝරන්න. කෑම බීම, හැඟීම්, සෙල්ලම්, දෛනික අවශ්‍යතා, අය හා තැන් සහ කතාබහ සඳහා ආරම්භක කොටු 84ක් ඇත. සිංහල හඬ ලබාගත හැකි ආකාරය උපාංගයේ ඇති හඬ, බාහිර TTS සේවාව හෝ පටිගත කළ හඬ මත රඳා පවතී.
+දැන් සිංහල අතුරුමුහුණතක් සහ දරුවන්ට හා ඔවුන්ට සහාය දෙන අයට භාවිත කළ හැකි ආරම්භක පුවරු හතක් ඇත. “සිංහලෙන් පටන් ගමු” තෝරන්න. කෑම බීම, හැඟීම්, සෙල්ලම්, දෛනික අවශ්‍යතා, අය හා තැන් සහ කතාබහ සඳහා කොටු 24ක “කියමු 24” මුල් පුවරුවක් සහ තවත් රූප පුවරු හයක් ඇත. සිංහල හඬ ලබාගත හැකි ආකාරය උපාංගයේ ඇති හඬ, බාහිර TTS සේවාව හෝ පටිගත කළ හඬ මත රඳා පවතී.
 
 ### සංවර්ධකයන් සඳහා
 

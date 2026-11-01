@@ -16,6 +16,8 @@ import { printService } from './service/printService';
 import { notificationService } from './service/notificationService.js';
 import { dataService } from './service/data/dataService';
 import { consoleReService } from './service/consoleReService';
+import { sinhalaStarterService } from './service/boards/sinhalaStarterService';
+import { isSinhalaStarterFilename } from './service/boards/sinhalaStarterPreview';
 
 let SERVICE_WORKER_UPDATE_CHECK_INTERVAL = 1000 * 60 * 15; // 15 Minutes
 
@@ -43,7 +45,7 @@ async function init() {
     if (gridsetFilename) {
         urlParamService.removeParam(urlParamService.params.PARAM_USE_GRIDSET_FILENAME);
         let autoUserSettings = localStorageService.getAutoImportedUserSettings();
-        let matchingUserConfig = autoUserSettings.find(settings => settings.originGridsetFilename === gridsetFilename);
+        let matchingUserConfig = autoUserSettings.find(settings => settings.originGridsetFilename === gridsetFilename || (isSinhalaStarterFilename(settings.originGridsetFilename) && isSinhalaStarterFilename(gridsetFilename)));
         if (matchingUserConfig) {
             autologinUser = matchingUserConfig.username;
         } else {
@@ -74,11 +76,17 @@ async function init() {
         promises.push(loginService.loginStoredUser(autologinUser, true));
     }
     Promise.all(promises)
-        .finally(() => {
+        .finally(async () => {
+            let replacementHome;
+            if (dataService.getCurrentUser()) {
+                try { replacementHome = await sinhalaStarterService.ensureDefault(); }
+                catch (error) { log.warn('Could not prepare Sinhala default', error); }
+            }
             let toMain = autologinUser || urlParamService.isDemoMode();
             let toLogin = lastActiveUser || localStorageService.getSavedUsers().length > 0;
             localStorageService.setLastActiveUser(autologinUser || lastActiveUser || '');
             let initHash = location.hash || (toMain ? '#main' : toLogin ? '#login' : '#welcome');
+            if (replacementHome && (!location.hash || location.hash === '#main' || /^#grid\/(?!edit\/)/.test(location.hash))) initHash = '#grid/' + replacementHome;
             if (!Router.isInitialized()) {
                 Router.init('#injectView', initHash);
             }

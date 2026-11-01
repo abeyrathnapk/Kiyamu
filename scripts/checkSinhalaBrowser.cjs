@@ -9,6 +9,11 @@ const root = path.resolve(__dirname, '..');
 const artifacts = fs.mkdtempSync(path.join(os.tmpdir(), 'kiyamu-sinhala-'));
 const port = 9097, debugPort = 9226;
 let serveLegacyBundle = !!process.env.KIYAMU_LEGACY_BUNDLE;
+const quickCoreFixture = !!process.env.KIYAMU_QUICK_CORE_FIXTURE;
+const legacyCoreId = 'grid-data-imported-quick-core-24';
+const oldWords = ['I','do','want','eat','to','good','you','go','like','tell','this','bad','it','is','look','wear','not','color/visual','they','what','when','stop','done','keyboard'];
+const legacyCore = {grids:[{id:legacyCoreId,modelName:'GridData',modelVersion:'{"major":6,"minor":0,"patch":0}',isShortVersion:false,label:{en:'Quick Core 24'},minColumnCount:6,rowCount:4,showGlobalGrid:false,gridElements:oldWords.map((word,i)=>({id:'grid-element-legacy-quick-core-'+i,modelName:'GridElement',modelVersion:'{"major":6,"minor":0,"patch":0}',type:'ELEMENT_TYPE_NORMAL',label:{en:word},width:1,height:1,x:i%6,y:Math.floor(i/6),actions:[{id:'grid-action-legacy-quick-core-'+i,modelName:'GridActionSpeak',modelVersion:'{"major":6,"minor":0,"patch":0}'}]}))}],metadata:{modelName:'MetaData',modelVersion:'{"major":6,"minor":0,"patch":0}',homeGridId:legacyCoreId,lastOpenedGridId:legacyCoreId,globalGridActive:false}};
+const legacyCatalog = [{name:{en:'Quick Core 24'},url:'quick-core-24.grd.json',selfContained:true,languages:['en'],description:{en:'Saved English core board fixture'},tags:[]}];
 const mime = {'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.wasm':'application/wasm','.ttf':'font/ttf','.woff2':'font/woff2'};
 const server = http.createServer((req,res) => {
     const name = decodeURIComponent(new URL(req.url,'http://localhost').pathname);
@@ -59,7 +64,11 @@ async function checkSentenceControls() {
     for(let i=0;i<60;i++){try{pages=await (await fetch('http://127.0.0.1:'+debugPort+'/json/list')).json();if(pages.length)break;}catch{}await sleep(250);}
     if(!pages?.length)throw Error('Could not start Edge debugging');
     ws=new WebSocket(pages.find(p=>p.type==='page').webSocketDebuggerUrl);
-    ws.on('message',raw=>{const m=JSON.parse(raw);if(m.id){const p=pending.get(m.id);if(p){clearTimeout(p.timer);pending.delete(m.id);m.error?p.reject(new Error(m.error.message)):p.resolve(m.result);}}else if(m.method==='Runtime.exceptionThrown'){errors.push(m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text);}else if(m.method==='Fetch.requestPaused'){command('Fetch.failRequest',{requestId:m.params.requestId,errorReason:'InternetDisconnected'}).catch(()=>{});}});
+    ws.on('message',raw=>{const m=JSON.parse(raw);if(m.id){const p=pending.get(m.id);if(p){clearTimeout(p.timer);pending.delete(m.id);m.error?p.reject(new Error(m.error.message)):p.resolve(m.result);}}else if(m.method==='Runtime.exceptionThrown'){errors.push(m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text);}else if(m.method==='Fetch.requestPaused'){const request=m.params;let response;
+        if(quickCoreFixture && /live_metadata(?:_beta)?\.json/.test(request.request.url)) response=legacyCatalog;
+        if(quickCoreFixture && /quick-core-24\.grd\.json/.test(request.request.url)) response=legacyCore;
+        if(response) command('Fetch.fulfillRequest',{requestId:request.requestId,responseCode:200,responseHeaders:[{name:'Content-Type',value:'application/json'},{name:'Access-Control-Allow-Origin',value:'*'}],body:Buffer.from(JSON.stringify(response)).toString('base64')}).catch(()=>{});
+        else command('Fetch.failRequest',{requestId:request.requestId,errorReason:'InternetDisconnected'}).catch(()=>{});}});
     await new Promise(resolve=>ws.once('open',resolve));
     await command('Page.enable');await command('Runtime.enable');await command('Network.enable');
     // All pictures, languages, fonts and starter data must work without remote APIs.
@@ -75,17 +84,52 @@ async function checkSentenceControls() {
     await command('Page.reload');await sleep(700);
     await waitFor("document.querySelector('.start-button') && document.documentElement.lang === 'en'",'saved language preference');
     console.log('LANGUAGE_PREFERENCE passed');
-    await click('.start-button');
-    await waitFor("document.querySelector('#grid-element-kiyamu-si-home-content-food')",'installed starter home');
+    if(quickCoreFixture && serveLegacyBundle) {
+        await click('button.big-button');
+        await waitFor("document.querySelector('.preview-buttons .btn-primary')", 'legacy catalog');
+        await click('.preview-buttons .btn-primary');
+        await waitFor("document.querySelector('#grid-element-legacy-quick-core-0')", 'imported English Quick Core 24');
+        console.log('LEGACY_QUICK_CORE_IMPORTED passed');
+    } else {
+        await click('.start-button');
+        await waitFor("document.querySelector('#grid-element-kiyamu-si-"+(serveLegacyBundle?'home':'core24')+"-content-food')",'installed starter home');
+    }
     if (serveLegacyBundle) {
         serveLegacyBundle = false;
         await command('Page.reload', {ignoreCache:true}); await sleep(700);
-        await waitFor("document.querySelector('#grid-element-kiyamu-si-home-content-food')", 'existing starter after update');
-        console.log('EXISTING_BOARD_RELOAD passed');
+        await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-food')", 'Sinhala core replaces saved default');
+        console.log('EXISTING_DEFAULT_REPLACED passed');
     }
-    await shot('home-desktop');
-    await click('#grid-element-kiyamu-si-home-content-food');
+    const coreTiles = await evaluate("document.querySelectorAll('[id^=grid-element-kiyamu-si-core24-content-]').length");
+    if(coreTiles!==24) throw Error('Expected 24 Sinhala core tiles, got '+coreTiles);
+    for(const key of ['i','rice','eat']) await click('#grid-element-kiyamu-si-core24-content-'+key);
+    const coreSentence = await evaluate("document.querySelector('.collect-container').innerText.replace(/\\s+/g,' ').trim()");
+    if(coreSentence!=='මම බත් කනවා') throw Error('Incorrect core sentence: '+coreSentence);
+    if(!await evaluate("document.querySelector('#app').__vue__.uiLocked")) {
+        await click('#gridView button[tabindex=\"33\"]');
+        await waitFor("document.querySelector('#app').__vue__.uiLocked",'child board view');
+    }
+    await shot('core24-desktop');
+    await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
+    await sleep(500);await shot('core24-mobile');
+    const coreLayout = await evaluate("({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,buttons:[...document.querySelectorAll('#gridView .element-container')].map(e=>({w:e.getBoundingClientRect().width,h:e.getBoundingClientRect().height}))})");
+    if(coreLayout.width<coreLayout.scrollWidth || coreLayout.buttons.some(b=>b.w<44||b.h<44)) throw Error('Core mobile targets too small or overflowing: '+JSON.stringify(coreLayout));
+    await click('#grid-element-kiyamu-si-core24-clear');
+    await command('Page.reload');await sleep(700);
+    await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-food')", 'Sinhala core remains default after reload');
+    const profileDatabases = await evaluate("indexedDB.databases().then(dbs=>dbs.map(db=>db.name).filter(name=>name.startsWith('_pouch_')).sort())");
+    await command('Page.navigate',{url:'http://127.0.0.1:'+port+'/?gridset_filename=quick-core-24.grd.json'});await sleep(700);
+    await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-food')",'legacy direct link opens Sinhala core');
+    const afterLinkDatabases = await evaluate("indexedDB.databases().then(dbs=>dbs.map(db=>db.name).filter(name=>name.startsWith('_pouch_')).sort())");
+    if(JSON.stringify(profileDatabases)!==JSON.stringify(afterLinkDatabases)) throw Error('Legacy direct link created a duplicate profile: '+JSON.stringify({before:profileDatabases,after:afterLinkDatabases}));
+    console.log('LEGACY_LINK_REUSES_SINHALA_PROFILE passed');
+    await command('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false});
+    await click('#grid-element-kiyamu-si-core24-content-food');
     await waitFor("document.querySelector('#grid-element-kiyamu-si-food-content-water')",'food board');
+    await click('#grid-element-kiyamu-si-food-home');
+    await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-food')",'category returns to Sinhala core');
+    await click('#grid-element-kiyamu-si-core24-content-food');
+    await waitFor("document.querySelector('#grid-element-kiyamu-si-food-content-water')",'food board return');
     for(const key of ['to-me','water','want'])await click('#grid-element-kiyamu-si-food-content-'+key);
     const sentence=await evaluate("document.querySelector('.collect-container').innerText.replace(/\\s+/g,' ').trim()");
     console.log('SENTENCE '+sentence);

@@ -3,12 +3,14 @@ import { i18nService } from '../i18nService';
 import { util } from '../../util/util';
 import { constants } from '../../util/constants';
 
+import { createSinhalaStarterPreview, isSinhalaStarterFilename, QUICK_CORE_FILENAME } from './sinhalaStarterPreview';
+
 let boardService = {};
 
 let BASE_URL = "https://asterics.github.io/Asterics-AAC-Data/";
 let GITHUB_BASE_URL = "https://github.com/asterics/Asterics-AAC-Data/tree/main/";
 let METADATA_URL = constants.IS_ENVIRONMENT_PROD ? BASE_URL + "live_metadata.json" : BASE_URL + "live_metadata_beta.json";
-let ownResults = [];
+let ownResults = [createSinhalaStarterPreview()];
 let searchTermsMap = new Map();
 let translationMap = {};
 let initResolve = null;
@@ -42,7 +44,7 @@ boardService.query = async function (searchTerm = '', options = {}) {
     searchTerm = searchTerm.replace(/\s+/g, ' '); // replace multiple spaces
     let searchWords = searchTerm.toLocaleLowerCase().split(' ');
     for (let word of searchWords) {
-        results = results.filter(preview => searchTermsMap.get(preview).some(term => term.includes(word)));
+        results = results.filter(preview => (searchTermsMap.get(preview) || Object.values(preview.name)).some(term => term.toLocaleLowerCase().includes(word)));
     }
     return sortResults(results, options);
 };
@@ -53,7 +55,8 @@ boardService.query = async function (searchTerm = '', options = {}) {
  * @return {*|string}
  */
 boardService.getPreview = function(filename) {
-    return  ownResults.find(preview => preview.filename === filename);
+    if (isSinhalaStarterFilename(filename)) return createSinhalaStarterPreview();
+    return ownResults.find(preview => preview.filename === filename);
 }
 
 async function init() {
@@ -70,7 +73,7 @@ init();
 async function fetchData() {
     let response = await fetch(METADATA_URL);
     let data = await response.json();
-    ownResults = data.map(object => new GridPreview(object, { baseUrl: BASE_URL, githubEditable: true, githubBaseUrl: GITHUB_BASE_URL }));
+    ownResults = [createSinhalaStarterPreview(), ...data.map(object => new GridPreview(object, { baseUrl: BASE_URL, githubEditable: true, githubBaseUrl: GITHUB_BASE_URL })).filter(preview => preview.filename !== QUICK_CORE_FILENAME)];
     searchTermsMap = new Map();
     for (let preview of ownResults) {
         if (preview.translate) {

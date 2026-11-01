@@ -9,14 +9,26 @@ const navigate = (key, si, en, symbol, target) => ({ key, kind: 'navigate', labe
 
 export const SINHALA_STARTER_BOARDS = [
     {
-        key: 'home', title: { si: 'කියමු', en: 'Let’s talk' },
+        key: 'core24', title: { si: 'කියමු 24', en: 'Kiyamu Sinhala Core 24' },
         items: [
             word('to-me', 'මට', 'To me', 'me'),
+            word('water', 'වතුර', 'Water', 'water'),
             word('want', 'ඕනේ', 'Want', 'want'),
             word('no', 'එපා', 'Don’t want', 'no'),
-            word('more', 'තව', 'More', 'more'),
             word('i', 'මම', 'I', 'me'),
+            word('rice', 'බත්', 'Rice', 'rice'),
+            word('eat', 'කනවා', 'Eat', 'eat'),
+            word('more', 'තව', 'More', 'more'),
+            word('you', 'ඔයා', 'You', 'yourturn'),
+            word('go', 'යනවා', 'Go', 'go'),
+            word('good', 'හොඳයි', 'Good', 'happy'),
             phrase('finished', 'ඉවරයි', 'Finished', 'finished'),
+            phrase('yes', 'ඔව්', 'Yes', 'yes'),
+            phrase('no-answer', 'නෑ', 'No', 'negative'),
+            {...phrase('help', 'උදව්', 'Help', 'help'), utterance:{si:'මට උදව් කරන්න',en:'Help me'}},
+            phrase('stop', 'නවත්තන්න', 'Stop', 'stop'),
+            {...phrase('toilet', 'වැසිකිළිය', 'Toilet', 'toilet'), utterance:{si:'මට වැසිකිළියට යන්න ඕනේ',en:'I need the toilet'}},
+            phrase('pain', 'මට රිදෙනවා', 'It hurts', 'pain'),
             navigate('food', 'කෑම බීම', 'Food and drink', 'food', 'food'),
             navigate('feelings', 'මට දැනෙන දේ', 'How I feel', 'feelings', 'feelings'),
             navigate('activities', 'සෙල්ලම් කරමු', 'Play and activities', 'play', 'activities'),
@@ -130,6 +142,8 @@ export const SINHALA_STARTER_BOARDS = [
 ];
 
 export const SINHALA_STARTER_EXAMPLES = [
+    { board: 'core24', keys: ['to-me', 'water', 'want'], text: 'මට වතුර ඕනේ' },
+    { board: 'core24', keys: ['i', 'rice', 'eat'], text: 'මම බත් කනවා' },
     { board: 'food', keys: ['to-me', 'water', 'want'], text: 'මට වතුර ඕනේ' },
     { board: 'food', keys: ['to-me', 'rice', 'no'], text: 'මට බත් එපා' },
     { board: 'activities', keys: ['i', 'play', 'do'], text: 'මම සෙල්ලම් කරනවා' },

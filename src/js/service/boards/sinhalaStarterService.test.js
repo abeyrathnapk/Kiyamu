@@ -36,3 +36,29 @@ test('retry completes an interrupted setup without replacing saved boards', asyn
     expect(dataService.saveGrid).toHaveBeenCalledTimes(5);
     expect(dataService.saveMetadata).toHaveBeenCalledWith(expect.objectContaining({homeGridId:SINHALA_HOME_ID}));
 });
+
+
+test('replaces Quick Core 24 as home and last-opened board, retaining input settings and saved boards', async () => {
+    const old = {id:'grid-data-imported-quick-core', label:{en:'Quick Core 24'}};
+    dataService.getGrids.mockResolvedValue([old]);
+    dataService.getMetadata.mockResolvedValue({...metadata(),homeGridId:old.id,lastOpenedGridId:old.id,locked:false,globalGridActive:true});
+    expect(await sinhalaStarterService.ensureDefault()).toBe(SINHALA_HOME_ID);
+    expect(dataService.saveMetadata).toHaveBeenCalledWith(expect.objectContaining({homeGridId:SINHALA_HOME_ID,lastOpenedGridId:SINHALA_HOME_ID,globalGridActive:false,locked:false,inputConfig:{scanEnabled:true}}));
+    expect(dataService.saveGrid.mock.calls.every(([grid])=>grid.id!==old.id)).toBe(true);
+});
+
+test('an explicit personal home is kept even if Quick Core also exists', async () => {
+    dataService.getGrids.mockResolvedValue([{id:'personal',label:{en:'My words'}},{id:'quick',label:{en:'Quick Core 24'}}]);
+    dataService.getMetadata.mockResolvedValue({...metadata(),homeGridId:'personal',lastOpenedGridId:'quick'});
+    expect(await sinhalaStarterService.ensureDefault()).toBeNull();
+    expect(dataService.saveGrid).not.toHaveBeenCalled();
+    expect(dataService.saveMetadata).not.toHaveBeenCalled();
+});
+
+test('a returning Sinhala core profile is not reset or translated again', async () => {
+    dataService.getGrids.mockResolvedValue(createSinhalaStarterBoards());
+    dataService.getMetadata.mockResolvedValue({...metadata(),homeGridId:SINHALA_HOME_ID});
+    expect(await sinhalaStarterService.ensureDefault()).toBeNull();
+    expect(dataService.saveMetadata).not.toHaveBeenCalled();
+    expect(i18nService.setContentLanguage).not.toHaveBeenCalled();
+});

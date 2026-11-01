@@ -21,6 +21,7 @@ import { MainVue } from '../../vue/mainVue.js';
 import { util } from '../../util/util.js';
 import { boardService } from '../boards/boardService';
 import { upgradeSinhalaStarterLayout } from '../boards/sinhalaStarterLayout';
+import { isSinhalaStarterFilename } from '../boards/sinhalaStarterPreview';
 
 let dataService = {};
 let metadataFallback = new MetaData();
@@ -584,6 +585,12 @@ dataService.importBackupFromPreview = async function(preview, options = {}) {
         return;
     }
     options.progressFn = options.progressFn || (() => {});
+    if (isSinhalaStarterFilename(preview.filename)) {
+        const { sinhalaStarterService } = await import('../boards/sinhalaStarterService');
+        const homeId = await sinhalaStarterService.install({makeHome: true});
+        options.progressFn(100);
+        return homeId;
+    }
     options.filename = options.filename || preview.filename;
     options.skipDelete = true;
     options.progressFn(10, i18nService.t('downloadingConfig'));

@@ -21,6 +21,7 @@ import { MainVue } from './vue/mainVue';
 import HelpView from '../vue-components/views/helpView.vue';
 import { constants } from './util/constants.js';
 import { urlParamService } from './service/urlParamService';
+import { sinhalaStarterService } from './service/boards/sinhalaStarterService';
 
 let NO_DB_VIEWS = ['#login', '#register', '#welcome', '#add', '#about', '#help', '#outdated'];
 
@@ -340,9 +341,13 @@ function setMenuItemSelected(hash) {
     $(`nav a[href='${hash}'] button`).addClass('selected');
 }
 
-function toMainInternal() {
+async function toMainInternal() {
     if (!routingEndabled) {
         return;
+    }
+    if (dataService.getCurrentUser()) {
+        try { await sinhalaStarterService.ensureDefault(); }
+        catch (error) { log.warn('Could not prepare Sinhala default', error); }
     }
     dataService.getMetadata().then((metadata) => {
         let gridId = metadata ? metadata.homeGridId || metadata.lastOpenedGridId : null;
