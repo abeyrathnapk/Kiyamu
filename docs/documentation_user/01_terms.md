@@ -1,6 +1,6 @@
 # Terms
 
-This chapter explains the most important terms used in relation to the Asterics AAC.
+This chapter explains the most important terms used in relation to the Kiyamu AAC.
 
 [Back to Overview](README.md)
 
