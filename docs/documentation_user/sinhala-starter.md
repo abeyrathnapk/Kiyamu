@@ -1,5 +1,9 @@
 # කියමු — සිංහල ආරම්භක පුවරු
 
+වාක්‍යය පෙන්වන ඉහළ පේළියේ දකුණු පැත්තේ **කියන්න**, **එකක් මකන්න**, **සියල්ල මකන්න** බොත්තම් තිබෙනවා. **වැසිකිළිය** බොත්තම **මුලට**, **ඔව්**, **නෑ**, **උදව්** සමඟ ඊළඟ පේළියේ තිබෙනවා.
+
+The sentence controls sit at the right end of the top message bar. Toilet is in the quick-access row below it. Existing starter boards with the original layout update when reopened; personalized words, pictures and speech actions are preserved. Manually rearranged layouts remain unchanged.
+
 ## දරුවාට තමන්ගේ අදහස කියන්න ඉඩ දෙමු
 
 මෙම පුවරු කුඩා දරුවන්ට සහ ඔවුන් සමඟ කතා කරන අයට ආරම්භයක් ලෙස සකස් කර ඇත. කෑම ඉල්ලීමට පමණක් නොව, එපා කියන්න, සෙල්ලමක් තෝරන්න, හැඟීමක් කියන්න, උදව් ඉල්ලන්න සහ කතාබහට එක්වන්නත් වචන ඇත.

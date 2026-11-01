@@ -9,14 +9,14 @@ test('starter boards have unique IDs, valid navigation, and no overlapping cells
     expect(boards).toHaveLength(7);
     for (const board of boards) {
         const occupied = new Set();
-        expect(board.minColumnCount).toBe(4);
+        expect(board.minColumnCount).toBe(20);
         expect(board.showGlobalGrid).toBe(false);
         for (const element of board.gridElements) {
             expect(elementIds.has(element.id)).toBe(false);
             elementIds.add(element.id);
             for (let x = element.x; x < element.x + element.width; x++) {
                 for (let y = element.y; y < element.y + element.height; y++) {
-                    expect(x).toBeLessThan(4); expect(y).toBeLessThan(6);
+                    expect(x).toBeLessThan(20); expect(y).toBeLessThan(5);
                     expect(occupied.has(x + ':' + y)).toBe(false);
                     occupied.add(x + ':' + y);
                 }
@@ -28,13 +28,13 @@ test('starter boards have unique IDs, valid navigation, and no overlapping cells
             }
             if (element.image) expect(element.image.data).toMatch(/^data:image\/svg\+xml;base64,/);
         }
-        expect(occupied.size).toBe(24);
+        expect(occupied.size).toBe(100);
     }
 });
 
 test('help, refusal, home and sentence controls stay in the same positions on every board', () => {
     const boards = createSinhalaStarterBoards();
-    const expected = {home:[0,1], yes:[1,1], no:[2,1], help:[3,1], speak:[0,5], undo:[1,5], clear:[2,5], toilet:[3,5]};
+    const expected = {home:[0,1], yes:[4,1], no:[8,1], help:[12,1], speak:[11,0], undo:[14,0], clear:[17,0], toilet:[16,1]};
     boards.forEach((board, index) => {
         for (const [name, position] of Object.entries(expected)) {
             const control = board.gridElements.find(e => e.id === 'grid-element-kiyamu-si-' + SINHALA_STARTER_BOARDS[index].key + '-' + name);

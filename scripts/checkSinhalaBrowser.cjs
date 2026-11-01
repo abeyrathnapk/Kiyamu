@@ -8,13 +8,14 @@ const WebSocket = require('ws');
 const root = path.resolve(__dirname, '..');
 const artifacts = fs.mkdtempSync(path.join(os.tmpdir(), 'kiyamu-sinhala-'));
 const port = 9097, debugPort = 9226;
+let serveLegacyBundle = !!process.env.KIYAMU_LEGACY_BUNDLE;
 const mime = {'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.wasm':'application/wasm','.ttf':'font/ttf','.woff2':'font/woff2'};
 const server = http.createServer((req,res) => {
     const name = decodeURIComponent(new URL(req.url,'http://localhost').pathname);
     const file = path.resolve(root, '.' + (name === '/' ? '/index.html' : name));
     if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {res.writeHead(404).end();return;}
     res.setHeader('Content-Type',mime[path.extname(file)] || 'application/octet-stream');
-    fs.createReadStream(file).pipe(res);
+    fs.createReadStream(serveLegacyBundle && name === '/app/build/asterics-aac.bundle.js' ? process.env.KIYAMU_LEGACY_BUNDLE : file).pipe(res);
 });
 const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
 let browser, ws, seq=0; const pending=new Map(), errors=[];
@@ -39,6 +40,18 @@ async function click(selector) {
     await sleep(250);
 }
 async function shot(name) {const r=await command('Page.captureScreenshot',{format:'png'});const file=path.join(artifacts,name+'.png');fs.writeFileSync(file,Buffer.from(r.data,'base64'));console.log('SCREENSHOT '+file);}
+async function checkSentenceControls() {
+    const order = await evaluate("[...document.querySelectorAll('#gridView .element-container')].slice(0,4).map(e=>e.id.replace('grid-element-kiyamu-si-food-',''))");
+    if(JSON.stringify(order)!==JSON.stringify(['sentence','speak','undo','clear'])) throw Error('Keyboard order does not follow top row: '+JSON.stringify(order));
+    const layout = await evaluate("(()=>{const rect=key=>{const r=document.querySelector('#grid-element-kiyamu-si-food-'+key).getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right}};return {sentence:rect('sentence'),controls:['speak','undo','clear'].map(rect),width:innerWidth,scrollWidth:document.documentElement.scrollWidth}})()");
+    let right = layout.sentence.right;
+    for(const control of layout.controls) {
+        if(Math.abs(control.y-layout.sentence.y)>2 || control.x<right-1 || control.w<44 || control.h<44 || control.right>layout.width+1) throw Error('Sentence control layout failed: '+JSON.stringify(layout));
+        right=control.right;
+    }
+    if(layout.scrollWidth>layout.width) throw Error('Horizontal page overflow');
+    console.log('TOP_SENTENCE_CONTROLS passed at '+layout.width+'px');
+}
 (async()=>{
     await new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));
     browser=spawn('C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',['--headless=new','--no-first-run','--disable-background-networking','--no-default-browser-check','--remote-debugging-port='+debugPort,'--user-data-dir='+path.join(artifacts,'profile'),'about:blank'],{windowsHide:true,stdio:'ignore'});
@@ -64,6 +77,12 @@ async function shot(name) {const r=await command('Page.captureScreenshot',{forma
     console.log('LANGUAGE_PREFERENCE passed');
     await click('.start-button');
     await waitFor("document.querySelector('#grid-element-kiyamu-si-home-content-food')",'installed starter home');
+    if (serveLegacyBundle) {
+        serveLegacyBundle = false;
+        await command('Page.reload', {ignoreCache:true}); await sleep(700);
+        await waitFor("document.querySelector('#grid-element-kiyamu-si-home-content-food')", 'existing starter after update');
+        console.log('EXISTING_BOARD_RELOAD passed');
+    }
     await shot('home-desktop');
     await click('#grid-element-kiyamu-si-home-content-food');
     await waitFor("document.querySelector('#grid-element-kiyamu-si-food-content-water')",'food board');
@@ -77,9 +96,16 @@ async function shot(name) {const r=await command('Page.captureScreenshot',{forma
     await click('#grid-element-kiyamu-si-food-undo');
     const afterUndo=await evaluate("document.querySelector('.collect-container').innerText.replace(/\\s+/g,' ').trim()");
     if(afterUndo!=='මට වතුර')throw Error('Undo removed wrong word: '+afterUndo);
+    await click('#grid-element-kiyamu-si-food-clear');
+    const afterClear = await evaluate("document.querySelector('.collect-container').innerText.trim()");
+    if(afterClear) throw Error('Clear left words in the sentence: ' + afterClear);
+    for(const key of ['to-me','water','want']) await click('#grid-element-kiyamu-si-food-content-'+key);
+    await click('#grid-element-kiyamu-si-food-speak');
+    if(await evaluate("document.querySelector('.collect-container').innerText.replace(/\\s+/g,' ').trim()") !== sentence) throw Error('Speak changed the sentence');
+    await checkSentenceControls();
     await shot('food-desktop');
     await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
-    await sleep(600);await shot('food-mobile');
+    await sleep(600);await checkSentenceControls();await shot('food-mobile');
     console.log('FONT '+JSON.stringify(await evaluate("(()=>{const e=document.querySelector('#grid-element-kiyamu-si-food-content-banana .text-container');const c=document.createElement('canvas').getContext('2d');c.font=getComputedStyle(e).font;return {font:c.font,width:e.clientWidth,measured:c.measureText(e.innerText).width,inline:e.style.cssText,parentFont:getComputedStyle(e.parentNode).font}})()")));
     console.log('LAYOUT '+JSON.stringify(await evaluate("({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,buttons:[...document.querySelectorAll('#gridView .element-container')].map(e=>{const r=e.getBoundingClientRect();return {label:e.innerText,w:Math.round(r.width),h:Math.round(r.height),bottom:Math.round(r.bottom)}})})")));
     await evaluate("navigator.serviceWorker.register('./serviceWorker.js').then(()=>navigator.serviceWorker.ready).then(()=>true)");

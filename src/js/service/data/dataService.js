@@ -20,6 +20,7 @@ import { constants } from '../../util/constants.js';
 import { MainVue } from '../../vue/mainVue.js';
 import { util } from '../../util/util.js';
 import { boardService } from '../boards/boardService';
+import { upgradeSinhalaStarterLayout } from '../boards/sinhalaStarterLayout';
 
 let dataService = {};
 let metadataFallback = new MetaData();
@@ -38,6 +39,7 @@ dataService.getGrid = async function (id, onlyShortVersion = false, noObjectMode
         return Promise.resolve(null);
     }
     return databaseService.getSingleObject(GridData, id, onlyShortVersion).then((result) => {
+        if (upgradeSinhalaStarterLayout(result)) gridUtil.sortGridElements(result.gridElements);
         if (!noObjectModel) {
             result = result ? new GridData(result) : null;
         } else {
@@ -81,6 +83,7 @@ dataService.getGrids = function (fullVersion, withoutGlobal) {
             let returnGrids = grids instanceof Array ? grids : [grids];
             returnGrids = returnGrids.filter(grid => !!grid);
             for (let grid of returnGrids) {
+                if (upgradeSinhalaStarterLayout(grid)) gridUtil.sortGridElements(grid.gridElements);
                 gridUtil.ensureDefaults(grid);
             }
             if (withoutGlobal) {
