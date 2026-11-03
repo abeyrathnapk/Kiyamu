@@ -21,13 +21,14 @@
         <div class="row">
             <label class="col-sm-2" for="colorCategory">{{ $t('colorCategory') }}</label>
             <div class="col-sm-7">
-                <select class="col-12" id="colorCategory" v-model="gridElement.colorCategory" @change="colorCategoryNotFitting = false">
+                <select class="col-12" id="colorCategory" v-model="selectedColorCategory" @change="colorCategoryNotFitting = false">
                     <option v-if="colorCategoryNotFitting" :value="colorCategoryNotFitting" disabled selected hidden>{{ $t("categoryFromOtherColorScheme", [$t(colorCategoryNotFitting)]) }}</option>
-                    <option :value="undefined">{{ $t('noneSelected') }}</option>
-                    <option v-for="category in colorCategories" :value="category">{{ category | translate }}</option>
+                    <option :value="isKiyamuTile ? 'KIYAMU_MISC' : undefined">{{ $t('noneSelected') }}</option>
+                    <option v-for="category in categoryChoices" :value="category">{{ category | translate }}</option>
                 </select>
             </div>
         </div>
+        <p v-if="isKiyamuTile">{{ $t('kiyamuCategoryHint') }}</p>
         <div class="srow mb-5">
             <input type="checkbox" id="inputHidden" v-if="gridElement" v-model="gridElement.hidden"/>
             <label for="inputHidden">{{ $t('hideElement') }}</label>
@@ -63,7 +64,7 @@
                         <span v-if="metadata.colorConfig.colorMode === ColorConfig.COLOR_MODE_BORDER">{{ $t('customBorderColor') }}</span>
                         <span v-if="metadata.colorConfig.colorMode !== ColorConfig.COLOR_MODE_BORDER">{{ $t('customBackgroundColor') }}</span>
                     </label>
-                    <input class="five columns" type="color" id="backgroundColor" v-if="gridElement" v-model="gridElement.backgroundColor" @input="gridElement.colorCategory = undefined; resetTestGrid()"/>
+                    <input class="five columns" type="color" id="backgroundColor" v-if="gridElement" v-model="gridElement.backgroundColor" @input="customColourChanged()"/>
                     <button class="two columns" :disabled="!gridElement.backgroundColor" @click="gridElement.backgroundColor = null; resetTestGrid();">{{ $t('clear') }}</button>
                 </div>
                 <div class="srow mb-4" v-if="metadata.colorConfig.colorMode === ColorConfig.COLOR_MODE_BOTH">
@@ -138,6 +139,8 @@
     import { ColorConfig } from '../../js/model/ColorConfig';
     import {colorUtil} from "../../js/util/colorUtil";
 
+    import { isSinhalaTile, getSinhalaCategory, KIYAMU_CATEGORIES, KIYAMU_PALETTE } from '../../js/util/sinhalaAppearance';
+
     export default {
         components: { AppGridDisplay, SliderInput, Accordion },
         props: ['gridElement', 'gridData'],
@@ -158,6 +161,12 @@
             }
         },
         computed: {
+            isKiyamuTile() { return isSinhalaTile(this.gridElement); },
+            categoryChoices() { return this.isKiyamuTile ? [...new Set([...KIYAMU_CATEGORIES,...(KIYAMU_PALETTE[this.gridElement.colorCategory]?[this.gridElement.colorCategory]:[])])] : this.colorCategories; },
+            selectedColorCategory: {
+                get() { return this.isKiyamuTile ? this.gridElement.colorCategory || getSinhalaCategory(this.gridElement) : this.gridElement.colorCategory; },
+                set(value) { this.$set(this.gridElement,'colorCategory',value); this.resetTestGrid(); }
+            },
             addElementToCollectElement: {
                 get() {
                     if (!this.gridElement.collectMode && this.gridElement.dontCollect) {
@@ -180,6 +189,7 @@
             }
         },
         methods: {
+            customColourChanged() { if(!this.isKiyamuTile)this.$set(this.gridElement,'colorCategory',undefined); this.resetTestGrid(); },
             resetTestGrid() {
                 let element = JSON.parse(JSON.stringify(this.gridElement));
                 element.x = 0;
@@ -227,7 +237,7 @@
             dataService.getMetadata().then(metadata => {
                 this.metadata = metadata;
                 this.colorCategories = colorUtil.getActiveColorScheme(metadata).categories;
-                if (!this.colorCategories.includes(this.gridElement.colorCategory)) {
+                if (!this.categoryChoices.includes(this.gridElement.colorCategory)) {
                     this.colorCategoryNotFitting = this.gridElement.colorCategory;
                 }
             })

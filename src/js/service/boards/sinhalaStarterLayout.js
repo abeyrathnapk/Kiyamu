@@ -1,3 +1,5 @@
+import { applySinhalaToolbar } from './sinhalaToolbar';
+
 export const SINHALA_GRID_PREFIX = 'grid-data-kiyamu-si-v1-';
 
 /** Upgrade the original starter layout on read, preserving words, pictures and actions.
@@ -5,6 +7,12 @@ export const SINHALA_GRID_PREFIX = 'grid-data-kiyamu-si-v1-';
  * is persisted through the normal save path when the board is next edited.
  */
 export function upgradeSinhalaStarterLayout(grid) {
+    const legacyChanged = upgradeLegacySinhalaLayout(grid);
+    const toolbarChanged = applySinhalaToolbar(grid);
+    return legacyChanged || toolbarChanged;
+}
+
+function upgradeLegacySinhalaLayout(grid) {
     if (grid?.id?.startsWith(SINHALA_GRID_PREFIX)) {
         for (const element of grid.gridElements || []) {
             if (!element.additionalProps?.sinhalaStarter || !element.id.endsWith('-home') || element.id.includes('-content-')) continue;

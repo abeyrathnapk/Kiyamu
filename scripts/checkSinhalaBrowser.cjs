@@ -1,4 +1,4 @@
-﻿/* Manual smoke test: node scripts/checkSinhalaBrowser.cjs (Windows Edge). */
+/* Manual smoke test: node scripts/checkSinhalaBrowser.cjs (Windows Edge). */
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -7,7 +7,7 @@ const {spawn} = require('child_process');
 const WebSocket = require('ws');
 const root = path.resolve(__dirname, '..');
 const artifacts = fs.mkdtempSync(path.join(os.tmpdir(), 'kiyamu-sinhala-'));
-const port = 9097, debugPort = 9226;
+const port = Number(process.env.KIYAMU_TEST_PORT || 9097), debugPort = Number(process.env.KIYAMU_DEBUG_PORT || 9226);
 let serveLegacyBundle = !!process.env.KIYAMU_LEGACY_BUNDLE;
 const quickCoreFixture = !!process.env.KIYAMU_QUICK_CORE_FIXTURE;
 const legacyCoreId = 'grid-data-imported-quick-core-24';
@@ -45,17 +45,42 @@ async function click(selector) {
     await sleep(250);
 }
 async function shot(name) {const r=await command('Page.captureScreenshot',{format:'png'});const file=path.join(artifacts,name+'.png');fs.writeFileSync(file,Buffer.from(r.data,'base64'));console.log('SCREENSHOT '+file);}
-async function checkSentenceControls() {
-    const order = await evaluate("[...document.querySelectorAll('#gridView .element-container')].slice(0,4).map(e=>e.id.replace('grid-element-kiyamu-si-food-',''))");
-    if(JSON.stringify(order)!==JSON.stringify(['sentence','speak','undo','clear'])) throw Error('Keyboard order does not follow top row: '+JSON.stringify(order));
-    const layout = await evaluate("(()=>{const rect=key=>{const r=document.querySelector('#grid-element-kiyamu-si-food-'+key).getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right}};return {sentence:rect('sentence'),controls:['speak','undo','clear'].map(rect),width:innerWidth,scrollWidth:document.documentElement.scrollWidth}})()");
-    let right = layout.sentence.right;
-    for(const control of layout.controls) {
-        if(Math.abs(control.y-layout.sentence.y)>2 || control.x<right-1 || control.w<44 || control.h<44 || control.right>layout.width+1) throw Error('Sentence control layout failed: '+JSON.stringify(layout));
-        right=control.right;
+async function checkSentenceControls(board='food') {
+    const keys=['home','back','sentence','speak','undo','clear'];
+    const layout=await evaluate("(()=>{const prefix='grid-element-kiyamu-si-"+board+"-';const order=[...document.querySelectorAll('#gridView .element-container')].slice(0,6).map(e=>e.id.replace(prefix,''));const boxes="+JSON.stringify(keys)+".map(key=>{const e=document.getElementById(prefix+key);const r=e.getBoundingClientRect();return {key,x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,label:e.getAttribute('aria-label'),title:e.title}});return {order,boxes,width:innerWidth,scrollWidth:document.documentElement.scrollWidth}})()");
+    if(JSON.stringify(layout.order)!==JSON.stringify(keys))throw Error('Wrong toolbar/keyboard order: '+JSON.stringify(layout));
+    let right=0;
+    for(const box of layout.boxes){
+        if(Math.abs(box.y-layout.boxes[0].y)>2 || box.x<right-1 || box.w<44 || box.h<44 || box.right>layout.width+1 || !box.label || (box.key!=='sentence'&&!box.title))throw Error('Toolbar layout/accessibility failed: '+JSON.stringify(layout));
+        right=box.right;
     }
-    if(layout.scrollWidth>layout.width) throw Error('Horizontal page overflow');
-    console.log('TOP_SENTENCE_CONTROLS passed at '+layout.width+'px');
+    if(layout.scrollWidth>layout.width)throw Error('Horizontal page overflow');
+    console.log('CONSISTENT_TOOLBAR passed for '+board+' at '+layout.width+'px');
+}
+async function checkAppearanceModes() {
+    const snapshot=()=>evaluate("JSON.stringify(document.querySelector('#gridView').__vue__.renderGridData.gridElements.map(({id,label,pronunciation,x,y,width,height,image,actions})=>({id,label,pronunciation,x,y,width,height,image,actions})))");
+    const original=await snapshot();
+    for(const mode of ['strips','pale','none','border','filled']) {
+        await evaluate("document.querySelector('#gridView').__vue__.unlock(true); true");
+        await waitFor("!document.querySelector('#app').__vue__.uiLocked",'unlock settings');
+        await evaluate("location.hash='#settings'; true");
+        await waitFor("document.querySelector('[role=tablist]')",'settings tabs');
+        await evaluate("(()=>{const tabs=[...document.querySelectorAll('[role=tab]')];const tab=tabs.find(e=>e.textContent.includes('පෙනුම')||e.textContent.includes('Appearance'));if(!tab)throw Error('Appearance tab missing');tab.click();return true})()");
+        await waitFor("document.querySelector('#kiyamuAppearance')",'appearance picker');
+        await evaluate("(()=>{const select=document.querySelector('#kiyamuAppearance');select.value='"+mode+"';select.dispatchEvent(new Event('change',{bubbles:true}));return true})()");
+        await sleep(600);
+        await evaluate("location.hash='#main'; true");
+        await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-water')",'core after appearance change');
+        await click('#gridView button[tabindex="33"]');
+        await waitFor("document.querySelector('#app').__vue__.uiLocked",'locked core');
+        if(await snapshot()!==original)throw Error('Appearance changed vocabulary, positions or images');
+        const styles=await evaluate("(()=>{const tile=document.querySelector('#grid-element-kiyamu-si-core24-content-water');const label=tile.querySelector('.text-container');return {background:getComputedStyle(tile).backgroundColor,text:getComputedStyle(label).color,strip:getComputedStyle(tile,'::before').backgroundColor,mode:tile.className}})()");
+        if(styles.background!==(mode==='filled'?'rgb(243, 217, 171)':mode==='pale'?'rgb(255, 240, 219)':'rgb(255, 255, 255)')||styles.text!=='rgb(31, 41, 55)'||!styles.mode.includes('kiyamu-category-'+mode))throw Error('Unexpected palette '+JSON.stringify(styles));
+        await shot('appearance-'+mode);
+        await command('Page.reload');await sleep(700);
+        await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-water.kiyamu-category-"+mode+"')",'saved appearance');
+    }
+    console.log('APPEARANCE_MODES_AND_PRESERVATION passed');
 }
 (async()=>{
     await new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));
@@ -92,7 +117,7 @@ async function checkSentenceControls() {
         console.log('LEGACY_QUICK_CORE_IMPORTED passed');
     } else {
         await click('.start-button');
-        await waitFor("document.querySelector('#grid-element-kiyamu-si-"+(serveLegacyBundle?'home':'core24')+"-content-food')",'installed starter home');
+        await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-food, #grid-element-kiyamu-si-home-content-food')",'installed starter home');
     }
     if (serveLegacyBundle) {
         serveLegacyBundle = false;
@@ -109,9 +134,11 @@ async function checkSentenceControls() {
         await click('#gridView button[tabindex=\"33\"]');
         await waitFor("document.querySelector('#app').__vue__.uiLocked",'child board view');
     }
+    await checkSentenceControls('core24');
+    if(process.env.KIYAMU_APPEARANCE_CHECK)await checkAppearanceModes();
     await shot('core24-desktop');
     await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
-    await sleep(500);await shot('core24-mobile');
+    await sleep(500);await checkSentenceControls('core24');await shot('core24-mobile');
     const coreLayout = await evaluate("({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,buttons:[...document.querySelectorAll('#gridView .element-container')].map(e=>({w:e.getBoundingClientRect().width,h:e.getBoundingClientRect().height}))})");
     if(coreLayout.width<coreLayout.scrollWidth || coreLayout.buttons.some(b=>b.w<44||b.h<44)) throw Error('Core mobile targets too small or overflowing: '+JSON.stringify(coreLayout));
     await click('#grid-element-kiyamu-si-core24-clear');
@@ -126,6 +153,17 @@ async function checkSentenceControls() {
     await command('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false});
     await click('#grid-element-kiyamu-si-core24-content-food');
     await waitFor("document.querySelector('#grid-element-kiyamu-si-food-content-water')",'food board');
+    await click('#grid-element-kiyamu-si-food-back');
+    await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-food')",'Back returns to previous board');
+    for(const category of ['feelings','activities','care','people','chat']){
+        await click('#grid-element-kiyamu-si-core24-content-'+category);
+        await waitFor("document.querySelector('#grid-element-kiyamu-si-"+category+"-back')",category+' board');
+        await checkSentenceControls(category);
+        await click('#grid-element-kiyamu-si-'+category+'-back');
+        await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-food')",'Back returns to core');
+    }
+    await click('#grid-element-kiyamu-si-core24-content-food');
+    await waitFor("document.querySelector('#grid-element-kiyamu-si-food-content-water')",'food before Home');
     await click('#grid-element-kiyamu-si-food-home');
     await waitFor("document.querySelector('#grid-element-kiyamu-si-core24-content-food')",'category returns to Sinhala core');
     await click('#grid-element-kiyamu-si-core24-content-food');

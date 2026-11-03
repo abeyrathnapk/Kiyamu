@@ -13,7 +13,10 @@ class ColorConfig extends Model({
     borderWidth: [Number],
     elementMargin: [Number],
     borderRadius: [Number],
-    colorMode: [String]
+    colorMode: [String],
+    kiyamuAppearance: [String],
+    kiyamuVision: [String],
+    kiyamuIconBacking: [Boolean]
 }) {
     constructor(properties) {
         super(properties);

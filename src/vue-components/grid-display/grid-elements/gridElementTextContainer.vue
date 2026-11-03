@@ -1,7 +1,7 @@
 <template>
     <div ref="txtContainer" :class="`text-container ${metadata.textConfig.fontFamily}`"
          :style="`order: ${metadata.textConfig.textPosition === TextConfig.TEXT_POS_BELOW ? 1 : 0};
-                  text-align: center; font-size: ${fontSizePx}px; line-height: ${lineHeight}; color: ${gridElement && gridElement.fontColor ? gridElement.fontColor : 'unset'};
+                  text-align: center; font-size: ${fontSizePx}px; line-height: ${lineHeight}; color: ${appearance ? appearance.text : gridElement && gridElement.fontColor ? gridElement.fontColor : 'unset'};
                   flex-grow: ${withImage ? '0' : '1'};`">
         <span :style="`max-height: ${maxTextContainerHeight}; text-overflow: ${textOverflow}; white-space: ${whiteSpaceWrap}; margin: 0 ${txtMargin}px;`">
             <span v-html="displayLabel"/>
@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { getSinhalaAppearance } from '../../../js/util/sinhalaAppearance';
 import { TextConfig } from '../../../js/model/TextConfig';
 import { fontUtil } from '../../../js/util/fontUtil';
 import $ from '../../../js/externals/jquery';
@@ -43,6 +44,7 @@ export default {
         }
     },
     computed: {
+        appearance() { return getSinhalaAppearance(this.gridElement,this.metadata); },
         calculateLabel() {
             let label = '';
             if(this.gridElement) {
@@ -71,9 +73,9 @@ export default {
                 this.maxLines = Math.max(this.maxLines, 2);
             }
             this.fontSizePx = this.getFontSizePx(size);
-            this.maxTextContainerHeight = this.withImage ? (this.fontSizePx * this.lineHeight * this.maxLines) + 'px' : '100%';
-            this.textOverflow = this.metadata.textConfig.fittingMode === TextConfig.TOO_LONG_ELLIPSIS ? 'ellipsis' : 'clip';
-            this.whiteSpaceWrap = this.maxLines === 1 ? 'nowrap' : 'normal';
+            this.maxTextContainerHeight = this.appearance ? 'none' : this.withImage ? (this.fontSizePx * this.lineHeight * this.maxLines) + 'px' : '100%';
+            this.textOverflow = this.appearance ? 'clip' : this.metadata.textConfig.fittingMode === TextConfig.TOO_LONG_ELLIPSIS ? 'ellipsis' : 'clip';
+            this.whiteSpaceWrap = !this.appearance && this.maxLines === 1 ? 'nowrap' : 'normal';
             this.ready = true;
         },
         getFontSizePx(size) {
@@ -86,7 +88,7 @@ export default {
                 this.txtMargin = this.gridElement && this.gridElement.additionalProps && this.gridElement.additionalProps.sinhalaStarter ? 4 : 0;
                 kbdContainerPct = 100;
             }
-            if (this.metadata.textConfig.fittingMode === TextConfig.TOO_LONG_AUTO && realWidth > size.width - 2 * this.txtMargin) {
+            if ((this.appearance || this.metadata.textConfig.fittingMode === TextConfig.TOO_LONG_AUTO) && realWidth > size.width - 2 * this.txtMargin) {
                 let newFontSize = fontUtil.getFittingFontSize(label, this.$refs.txtContainer.parentElement, {
                     maxLines: this.maxLines,
                     padding: this.txtMargin,

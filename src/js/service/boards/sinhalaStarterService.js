@@ -1,4 +1,4 @@
-import { createSinhalaStarterBoards, SINHALA_HOME_ID, SINHALA_GRID_PREFIX } from './sinhalaStarter';
+import { createSinhalaStarterBoards, createSinhalaGlobalGrid, SINHALA_HOME_ID, SINHALA_GRID_PREFIX } from './sinhalaStarter';
 import { dataService } from '../data/dataService';
 import { localStorageService } from '../data/localStorageService';
 import { i18nService } from '../i18nService';
@@ -17,7 +17,7 @@ async function install({makeHome = false} = {}) {
     if (!existing.length || unfinishedSetup || makeHome) {
         metadata.homeGridId = SINHALA_HOME_ID;
         metadata.lastOpenedGridId = SINHALA_HOME_ID;
-        metadata.globalGridActive = false;
+        await prepareSharedToolbar(metadata);
         if (!existing.length || unfinishedSetup) metadata.locked = true;
         metadata.toHomeAfterSelect = false;
         metadata.activateARASAACGrammarAPI = false;
@@ -29,13 +29,25 @@ async function install({makeHome = false} = {}) {
         metadata.colorConfig.colorSchemesActivated = false;
         metadata.colorConfig.borderRadius = 0.7;
         await dataService.saveMetadata(metadata);
-        localStorageService.saveUserSettings({voiceConfig: {voiceLangIsTextLang: false}, originGridsetFilename: SINHALA_STARTER_FILENAME});
+        localStorageService.saveUserSettings({voiceConfig: {voiceLangIsTextLang: false}, originGridsetFilename: SINHALA_STARTER_FILENAME, sinhalaToolbarVersion:1});
     }
     await i18nService.setContentLanguage('si');
     await i18nService.setAppLanguage('si');
     localStorageService.saveUserSettings({isEmpty: false});
     return SINHALA_HOME_ID;
 }
+async function prepareSharedToolbar(metadata) {
+    if (!metadata.globalGridId) {
+        const toolbar = createSinhalaGlobalGrid();
+        const grids = await dataService.getGrids(false, false);
+        if (!grids.some(grid => grid.id === toolbar.id)) await dataService.saveGrid(toolbar);
+        metadata.globalGridId = toolbar.id;
+        metadata.globalGridHeightPercentage = 17;
+    }
+    // Starter boards have their own toolbar; other boards use this shared row.
+    metadata.globalGridActive = true;
+}
+
 /** Replace only the recognized imported default; never delete saved boards. */
 async function ensureDefault() {
     const metadata = await dataService.getMetadata();
@@ -48,6 +60,11 @@ async function ensureDefault() {
     if (!grids.length || quickCore || oldStarter) {
         await install({makeHome:true});
         return SINHALA_HOME_ID;
+    }
+    if (selectedId === SINHALA_HOME_ID && !localStorageService.getUserSettings().sinhalaToolbarVersion) {
+        await prepareSharedToolbar(metadata);
+        await dataService.saveMetadata(metadata);
+        localStorageService.saveUserSettings({sinhalaToolbarVersion:1});
     }
     // A previously added starter set also needs the new core as its navigation target.
     if (!grids.some(grid => grid.id === SINHALA_HOME_ID) && grids.some(grid => grid.id.startsWith(SINHALA_GRID_PREFIX))) {

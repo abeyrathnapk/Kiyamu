@@ -45,6 +45,7 @@ class SettingsUserLocal {
         this.ytState = settings.ytState || JSON.parse(JSON.stringify(initYtState));
         this.voiceConfig = settings.voiceConfig && Object.keys(settings.voiceConfig).length ? new VoiceConfig(settings.voiceConfig) : {};
         this.originGridsetFilename = settings.originGridsetFilename;
+        this.sinhalaToolbarVersion = settings.sinhalaToolbarVersion || 0;
         this.isEmpty = settings.isEmpty !== undefined ? settings.isEmpty : true;
         this.systemVolume = settings.systemVolume !== undefined ? settings.systemVolume : 100;
         this.systemVolumeMuted = settings.systemVolumeMuted || false;

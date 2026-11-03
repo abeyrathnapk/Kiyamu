@@ -1,3 +1,4 @@
+import { getSinhalaBoardBackground } from './sinhalaAppearance';
 import { modelUtil } from './modelUtil';
 import { GridElement } from '../model/GridElement';
 import { i18nService } from '../service/i18nService';
@@ -825,9 +826,9 @@ gridUtil.getCursorType = function(metadata, defaultCursorType = "default") {
  * @param defaultBackground
  * @returns {string|string}
  */
-gridUtil.getElemBackgroundCss = function(elem, childGrid = {}, globalGrid, defaultBackground = '') {
+gridUtil.getElemBackgroundCss = function(elem, childGrid = {}, globalGrid, defaultBackground = '', metadata) {
     let fromGlobal = globalGrid && !!globalGrid.gridElements.find(e => e.id === elem.id);
-    let backgroundColor = fromGlobal ? globalGrid.backgroundColor : childGrid.backgroundColor;
+    let backgroundColor = metadata ? getSinhalaBoardBackground(fromGlobal ? globalGrid : childGrid, metadata, defaultBackground) : fromGlobal ? globalGrid.backgroundColor : childGrid.backgroundColor;
     backgroundColor = backgroundColor || defaultBackground || constants.DEFAULT_GRID_BACKGROUND_COLOR;
     return backgroundColor ? `background-color: ${backgroundColor};` : '';
 };

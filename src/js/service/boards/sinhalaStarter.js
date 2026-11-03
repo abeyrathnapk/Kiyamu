@@ -1,6 +1,8 @@
 import { constants } from '../../util/constants';
 import { SINHALA_STARTER_BOARDS } from './sinhalaVocabulary';
 import { getSinhalaSymbol } from './sinhalaSymbols';
+import { applySinhalaToolbar } from './sinhalaToolbar';
+import { getSinhalaCategory } from '../../util/sinhalaAppearance';
 
 import { SINHALA_GRID_PREFIX } from './sinhalaStarterLayout';
 export { SINHALA_GRID_PREFIX } from './sinhalaStarterLayout';
@@ -17,8 +19,8 @@ function element(boardKey, key, label, x, y, props = {}) {
         modelName: 'GridElement', modelVersion: constants.MODEL_VERSION,
         type: 'ELEMENT_TYPE_NORMAL', label, pronunciation: {}, wordForms: [],
         width: 5, height: 1, x, y, hidden: false, vocabularyLevel: null,
-        fontColor: '#172e35', fontSizePct: 19,
-        backgroundColor: colors.word, borderColor: '#56716e',
+        fontColor: '#1F2937', fontSizePct: 19,
+        backgroundColor: colors.word, borderColor: '#64748B',
         additionalProps: { sinhalaStarter: true }, ...props
     };
 }
@@ -81,13 +83,29 @@ export function createSinhalaStarterBoards() {
                 ? navigate(key, 'content-' + item.key, item.label, x, y, item.symbol, item.target)
                 : speak(key, 'content-' + item.key, item.label, x, y, item.symbol, item.kind === 'phrase', item.utterance);
             tile.width = width;
+            if (core) tile.colorCategory = getSinhalaCategory(tile);
             return tile;
         });
-        return {
+        const grid = {
             id: SINHALA_GRID_PREFIX + key, modelName: 'GridData', modelVersion: constants.MODEL_VERSION,
             isShortVersion: false, label: board.title, minColumnCount: columns, rowCount: core ? 7 : 5,
-            showGlobalGrid: false, keyboardMode: 'KEYBOARD_DISABLED', backgroundColor: '#f4f6ef',
+            showGlobalGrid: false, keyboardMode: 'KEYBOARD_DISABLED', backgroundColor: '#F3F5F7',
             gridElements: [sentence, ...controls, ...content], additionalFiles: [], webRadios: []
         };
+        applySinhalaToolbar(grid);
+        return grid;
     });
+}
+
+/** Shared toolbar for retained imported boards and newly created boards. */
+export function createSinhalaGlobalGrid() {
+    const core = createSinhalaStarterBoards().find(grid => grid.id === SINHALA_HOME_ID);
+    const elements = core.gridElements.filter(element => element.y === 0).map(element => ({
+        ...element, id:element.id.replace('-core24-', '-toolbar-'),
+        actions:element.actions.map(action => ({...action,id:action.id.replace('-core24-', '-toolbar-')}))
+    }));
+    elements.push(element('toolbar','board',{si:'පුවරුව',en:'Board'},0,1,{
+        type:'ELEMENT_TYPE_DYNAMIC_GRID_PLACEHOLDER',width:40,height:6,actions:[]
+    }));
+    return {...core,id:SINHALA_GRID_PREFIX+'toolbar',label:{si:'පොදු බොත්තම් පේළිය',en:'Shared toolbar'},gridElements:elements,rowCount:7};
 }

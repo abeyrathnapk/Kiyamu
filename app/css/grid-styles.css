@@ -92,7 +92,8 @@
     opacity: 0.2; /* Equals 80% brightness, used for performance reasons */
 }
 
-.scanInactive.element-container, .scanInactive.element-container span {
+.scanInactive.element-container:not(.kiyamu-category-tile),
+.scanInactive.element-container:not(.kiyamu-category-tile) span {
     background: lightgray !important;
     color: darkgray !important;
     opacity: 0.4;
@@ -103,7 +104,7 @@
     color: darkgray !important;
 }
 
-.scanInactive .img-container {
+.scanInactive:not(.kiyamu-category-tile) .img-container {
     -webkit-filter: grayscale(100%);
     -moz-filter: grayscale(100%);
     -ms-filter: grayscale(100%);
@@ -146,3 +147,98 @@
 .collect-container.upside-down {
     transform: rotate(180deg);
 }
+
+/* Kiyamu appearance changes reserve identical space in every colour mode. */
+.kiyamu-category-tile .grid-item-content {
+    box-sizing: border-box;
+    padding-top: var(--kiyamu-strip-size, 6px);
+}
+
+.kiyamu-category-tile.kiyamu-category-strips::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: var(--kiyamu-strip-size, 6px);
+    background-color: var(--kiyamu-category-accent, #64748B);
+    opacity: var(--kiyamu-strip-visible, 1);
+    pointer-events: none;
+    z-index: 6;
+}
+
+.kiyamu-category-tile .img-container {
+    min-height: 0;
+    align-items: center;
+    background-color: #FFFFFF;
+}
+
+/* Feedback surrounds the tile; its category and symbol colours stay fixed. */
+.kiyamu-category-tile.element-container:focus-visible,
+.kiyamu-category-tile.element-container.scanFocus,
+.kiyamu-category-tile.element-container.mouseentered,
+.kiyamu-category-tile.element-container.highlight {
+    outline: 3px solid #1F2937 !important;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 3px #FFFFFF;
+    z-index: 12;
+}
+
+@media (hover: hover) {
+    .kiyamu-category-tile.element-container:hover {
+        outline: 3px solid #1F2937 !important;
+        outline-offset: 3px;
+        box-shadow: 0 0 0 3px #FFFFFF;
+        z-index: 12;
+    }
+}
+
+.kiyamu-category-tile.element-container::after {
+    top: var(--kiyamu-strip-size, 6px);
+    background-color: transparent;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 3px #1F2937;
+    opacity: 0;
+    animation: none;
+}
+
+.kiyamu-category-tile.element-container.selected::after {
+    animation: kiyamu-activation 220ms ease-out;
+}
+
+@keyframes kiyamu-activation {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kiyamu-category-tile.element-container.selected::after {
+        /* A stationary acknowledgement appears once, then clears. */
+        animation-timing-function: steps(1, end);
+    }
+}
+
+.kiyamu-category-tile .text-container { flex-shrink: 0; padding-bottom: 2px; }
+.kiyamu-category-tile .text-container span { overflow: visible; overflow-wrap: anywhere; }
+.kiyamu-category-tile .img-container img { object-fit: contain; }
+.kiyamu-board-frame { box-sizing: border-box; border: 5px solid transparent; overflow: visible !important; }
+.kiyamu-accessible-tile.element-container:focus-visible,
+.kiyamu-accessible-tile.element-container.scanFocus {
+    outline: 3px solid #1F2937 !important; outline-offset: 3px;
+    box-shadow: 0 0 0 3px #FFFFFF; z-index: 12;
+}
+.kiyamu-toolbar.element-container::after { background: transparent; box-shadow: inset 0 0 0 3px #1F2937; animation: none; }
+.kiyamu-toolbar.element-container.selected::after { animation: kiyamu-activation 220ms ease-out; }
+.kiyamu-toolbar.element-container.highlight { outline: 3px solid #1F2937; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .kiyamu-toolbar.element-container.selected::after { animation-timing-function: steps(1,end); } }
+
+/* Inset borders do not change tile geometry. Keep familiar image pixels intact. */
+.kiyamu-category-border::before,
+.kiyamu-category-filled::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 6;
+    border: 4px solid var(--kiyamu-category-accent); border-radius: inherit;
+}
+.kiyamu-category-filled .img-container { background-color: transparent; }
+
+.kiyamu-icon-transparent .img-container { background-color: transparent; }
+.kiyamu-icon-white .img-container { background-color: #FFFFFF; }

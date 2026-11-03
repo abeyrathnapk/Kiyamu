@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="srow content d-flex" v-if="showGrid && renderGridData && renderGridData.gridElements.length > 0" style="min-height: 0">
-            <app-grid-display id="grid-container" :grid-data="renderGridData" :metadata="metadata" :elem-css-fn="(elem) => gridUtil.getElemBackgroundCss(elem, renderGridData, globalGridData, metadata.colorConfig.gridBackgroundColor)"/>
+            <app-grid-display :class="renderGridData.id.startsWith('grid-data-kiyamu-si-') && getSinhalaAppearanceMode(metadata) !== 'legacy' ? 'kiyamu-board-frame' : null" id="grid-container" :grid-data="renderGridData" :metadata="metadata" :elem-css-fn="(elem) => gridUtil.getElemBackgroundCss(elem, renderGridData, globalGridData, metadata.colorConfig.gridBackgroundColor, metadata)"/>
         </div>
     </div>
 </template>
@@ -51,6 +51,7 @@
     import $ from '../../js/externals/jquery.js';
     import {L} from "../../js/util/lquery.js";
     import {actionService} from "../../js/service/actionService";
+    import {getSinhalaAppearanceMode} from '../../js/util/sinhalaAppearance';
     import {dataService} from "../../js/service/data/dataService";
     import {areService} from "../../js/service/areService";
     import {Router} from "./../../js/router.js";
@@ -143,6 +144,7 @@
                 this.showModal = modalType;
                 stopInputMethods();
             },
+            getSinhalaAppearanceMode,
             lock() {
                 let thiz = this;
                 thiz.metadata.locked = true;

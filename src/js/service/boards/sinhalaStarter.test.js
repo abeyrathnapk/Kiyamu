@@ -9,7 +9,7 @@ test('starter boards have unique IDs, valid navigation, and no overlapping cells
     expect(boards).toHaveLength(7);
     for (const board of boards) {
         const occupied = new Set();
-        expect(board.minColumnCount).toBe(20);
+        expect(board.minColumnCount).toBe(40);
         expect(board.showGlobalGrid).toBe(false);
         for (const element of board.gridElements) {
             expect(elementIds.has(element.id)).toBe(false);
@@ -24,7 +24,7 @@ test('starter boards have unique IDs, valid navigation, and no overlapping cells
             expect(element.label.si).toMatch(/[\u0d80-\u0dff]/);
             for (const action of element.actions) {
                 expect(actionIds.has(action.id)).toBe(false); actionIds.add(action.id);
-                if (action.modelName === 'GridActionNavigate') expect(boardIds.has(action.toGridId)).toBe(true);
+                if (action.modelName === 'GridActionNavigate' && action.navType === 'navigateToGrid') expect(boardIds.has(action.toGridId)).toBe(true);
             }
             if (element.image) expect(element.image.data).toMatch(/^data:image\/svg\+xml;base64,/);
         }
@@ -34,7 +34,7 @@ test('starter boards have unique IDs, valid navigation, and no overlapping cells
 
 test('category boards keep consistent quick-access and sentence controls', () => {
     const boards = createSinhalaStarterBoards();
-    const expected = {home:[0,1], yes:[4,1], no:[8,1], help:[12,1], speak:[11,0], undo:[14,0], clear:[17,0], toilet:[16,1]};
+    const expected = {home:[0,0], back:[5,0], yes:[0,1], no:[10,1], help:[20,1], speak:[25,0], undo:[30,0], clear:[35,0], toilet:[30,1]};
     boards.forEach((board, index) => {
         if (board.id === SINHALA_HOME_ID) return;
         for (const [name, position] of Object.entries(expected)) {
@@ -61,4 +61,15 @@ test('children can compose natural Sinhala requests and statements in tap order'
     expect(compose(food, ['to-me','water','want'])).toBe('මට වතුර ඕනේ');
     expect(compose(food, ['to-me','rice','no'])).toBe('මට බත් එපා');
     expect(compose(people, ['i','home','go'])).toBe('මම ගෙදර යනවා');
+});
+
+
+test('every Sinhala board uses Home, Back, sentence, Speak, Backspace and Clear in order', () => {
+    for(const board of createSinhalaStarterBoards()) {
+        const top = board.gridElements.filter(element=>element.y===0).sort((a,b)=>a.x-b.x);
+        expect(top.map(element=>element.id.split('-').pop())).toEqual(['home','back','sentence','speak','undo','clear']);
+        expect(top[0].actions[0].navType).toBe('navigateToHomeGrid');
+        expect(top[1].actions[0].navType).toBe('navigateToLastOpenedGrid');
+        expect(top.filter(element=>element.additionalProps.sinhalaToolbar)).toHaveLength(5);
+    }
 });

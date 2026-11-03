@@ -1,8 +1,8 @@
 # කියමු — සිංහල ආරම්භක පුවරු
 
-වාක්‍යය පෙන්වන ඉහළ පේළියේ දකුණු පැත්තේ **කියන්න**, **එකක් මකන්න**, **සියල්ල මකන්න** බොත්තම් තිබෙනවා. “කියමු 24” මුල් පුවරුවේ කොටු 24ක් තීරු හතරක තිබෙනවා. වතුර, බත්, ඕනේ, එපා, උදව් සහ වැසිකිළිය වැනි දේ එතැනින්ම කියන්න පුළුවන්.
+සෑම සිංහල පුවරුවකම ඉහළ පේළිය **මුලට → ආපසු → වාක්‍යය → කියන්න → එකක් මකන්න → සියල්ල මකන්න** ලෙස තිබෙනවා. වක්‍ර ඊතලය කලින් විවෘත කළ පුවරුවට ආපසු යන බොත්තමයි. “කියමු 24” මුල් පුවරුවේ කොටු 24ක් තීරු හතරක තිබෙනවා. වතුර, බත්, ඕනේ, එපා, උදව් සහ වැසිකිළිය වැනි දේ එතැනින්ම කියන්න පුළුවන්.
 
-The sentence controls sit at the right end of the top message bar. The new Sinhala core home contains 24 vocabulary/navigation tiles in four columns and six rows, with six category pages for more words. Existing starter boards with the original layout update when reopened; personalized words, pictures and speech actions are preserved. Manually rearranged layouts remain unchanged.
+Every Sinhala board uses the original AAC toolbar order: **Home → Back → sentence → Speak → Backspace → Clear all**. Back opens the previous board. The icon buttons retain Sinhala accessible names and hover descriptions. The shared toolbar is also enabled for retained original boards. New profiles receive an offline Sinhala shared toolbar for other boards; the starter boards show their own single toolbar. The new Sinhala core home contains 24 vocabulary/navigation tiles in four columns and six rows, with six category pages for more words. Existing starter boards with the original layout update when reopened; personalized words, pictures and speech actions are preserved. Manually rearranged layouts remain unchanged.
 
 ## දරුවාට තමන්ගේ අදහස කියන්න ඉඩ දෙමු
 

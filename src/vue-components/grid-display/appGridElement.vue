@@ -1,7 +1,7 @@
 <template>
-    <div v-if="element.type !== GridElement.ELEMENT_TYPE_UI_FILLER" role="button" :lang="element.additionalProps && element.additionalProps.sinhalaStarter ? 'si' : null" class="element-container" ref="container" tabindex="40" :aria-label="getAriaLabel(element)" :data-empty="isEmpty(element)"
+    <div v-if="element.type !== GridElement.ELEMENT_TYPE_UI_FILLER" role="button" :lang="element.additionalProps && element.additionalProps.sinhalaStarter ? 'si' : null" :class="appearanceClasses" class="element-container" ref="container" tabindex="40" :aria-label="getAriaLabel(element)" :title="element.additionalProps && element.additionalProps.sinhalaToolbar ? getAriaLabel(element) : null" :data-empty="isEmpty(element)"
          :style="`margin: ${elementMarginPx}px; border-radius: ${borderRadiusPx}px; cursor: ${cursorType};
-         border: ${borderWidthPx}px solid ${borderColor}; background-color: ${backgroundColor}; font-family: ${metadata.textConfig.fontFamily}; color: ${fontColor}`">
+         border: ${borderWidthPx}px solid ${borderColor}; background-color: ${backgroundColor}; font-family: ${metadata.textConfig.fontFamily}; color: ${fontColor}; --kiyamu-category-accent: ${appearance ? appearance.accent : 'transparent'}; --kiyamu-strip-size: ${stripSize}px`">
         <grid-element-normal v-if="element.type === GridElement.ELEMENT_TYPE_NORMAL" :grid-element="element" :metadata="metadata" :container-size="calculatedSize" v-bind="$props" aria-hidden="true"/>
         <grid-element-collect v-if="element.type === GridElement.ELEMENT_TYPE_COLLECT" :metadata="metadata" aria-hidden="true"/>
         <grid-element-youtube v-if="element.type === GridElement.ELEMENT_TYPE_YT_PLAYER" :grid-element="element" aria-hidden="true"/>
@@ -41,6 +41,7 @@ import GridElementMatrixConversation from './grid-elements/gridElementMatrixConv
 import { gridUtil } from '../../js/util/gridUtil';
 import GridElementChildPlaceholder from './grid-elements/gridElementChildPlaceholder.vue';
 import {colorUtil} from "../../js/util/colorUtil";
+import { getSinhalaAppearance } from '../../js/util/sinhalaAppearance';
 
 export default {
     components: { GridElementChildPlaceholder, GridElementMatrixConversation, GridElementLive, GridElementNormal, GridElementYoutube, GridElementCollect, GridElementHints, GridElementPredict },
@@ -55,6 +56,9 @@ export default {
         }
     },
     computed: {
+        appearance() { return getSinhalaAppearance(this.element,this.metadata); },
+        stripSize() { return Math.max(3, Math.min(10, Math.min(this.calculatedSize.width,this.calculatedSize.height)*0.06)); },
+        appearanceClasses() { return this.appearance ? ['kiyamu-accessible-tile',this.appearance.toolbar?'kiyamu-toolbar':'kiyamu-category-tile','kiyamu-category-'+this.appearance.mode,this.metadata.colorConfig?.kiyamuIconBacking === true ? 'kiyamu-icon-white' : 'kiyamu-icon-transparent'] : []; },
         calculatedSize() {
             return {
                 width: this.oneElementSize.width * this.element.width - 2 * this.getElementMargin() - 2 * this.getBorderWidth(),
@@ -62,13 +66,13 @@ export default {
             }
         },
         backgroundColor() {
-            return colorUtil.getBackgroundColor(this.element, this.metadata);
+            return this.appearance ? this.appearance.background : colorUtil.getBackgroundColor(this.element, this.metadata);
         },
         fontColor() {
-            return colorUtil.getFontColor(this.metadata, this.backgroundColor);
+            return this.appearance ? this.appearance.text : colorUtil.getFontColor(this.metadata, this.backgroundColor);
         },
         borderColor() {
-            return colorUtil.getBorderColor(this.element, this.metadata);
+            return this.appearance ? this.appearance.border : colorUtil.getBorderColor(this.element, this.metadata);
         },
         cursorType() {
             return gridUtil.getCursorType(this.metadata, "pointer");

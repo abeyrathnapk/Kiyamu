@@ -1,5 +1,27 @@
 <template>
     <div>
+        <section class="settings-area mb-4" aria-labelledby="kiyamu-appearance-title">
+            <h3 id="kiyamu-appearance-title">{{ $t('kiyamuAppearanceTitle') }}</h3>
+            <label for="kiyamuAppearance">{{ $t('kiyamuAppearanceMode') }}</label>
+            <select id="kiyamuAppearance" v-model="kiyamuAppearanceMode">
+                <option value="filled">{{ $t('kiyamuFilled') }}</option>
+                <option value="border">{{ $t('kiyamuBorder') }}</option>
+                <option value="strips">{{ $t('kiyamuStrips') }}</option>
+                <option value="pale">{{ $t('kiyamuPale') }}</option>
+                <option value="none">{{ $t('kiyamuNoColours') }}</option>
+                <option value="legacy">{{ $t('kiyamuKeepAppearance') }}</option>
+            </select>
+            <label><input type="checkbox" v-model="kiyamuIconBacking"> {{ $t('kiyamuIconBacking') }}</label>
+            <label for="kiyamuVision">{{ $t('kiyamuVision') }}</label>
+            <select id="kiyamuVision" v-model="kiyamuVision">
+                <option value="standard">{{ $t('kiyamuStandard') }}</option>
+                <option value="redGreen">{{ $t('kiyamuRedGreen') }}</option>
+                <option value="blueYellow">{{ $t('kiyamuBlueYellow') }}</option>
+                <option value="monochrome">{{ $t('kiyamuMonochrome') }}</option>
+            </select>
+            <p>{{ $t('kiyamuVisionHint') }}</p>
+            <p>{{ $t('kiyamuAppearanceHint') }}</p>
+        </section>
         <div class="srow">
             <div class="nine columns settings-area">
                 <h3 class="mt-2">{{ $t('quickSettings') }}</h3>
@@ -171,6 +193,8 @@
     import { ColorConfig } from '../../../js/model/ColorConfig';
     import {colorUtil} from "../../../js/util/colorUtil";
 
+    import { getSinhalaAppearanceMode } from '../../../js/util/sinhalaAppearance';
+
     export default {
         components: { AppGridDisplay, Accordion, SliderInput },
         props: ["metadata", "userSettingsLocal"],
@@ -183,6 +207,20 @@
                 constants: constants,
                 testGridData: null,
                 testElementLabel: i18nService.t("testElement"),
+            }
+        },
+        computed: {
+            kiyamuIconBacking: {
+                get() { return this.metadata.colorConfig.kiyamuIconBacking === true; },
+                set(value) { this.$set(this.metadata.colorConfig,'kiyamuIconBacking',value); this.saveMetadata(this.metadata); }
+            },
+            kiyamuVision: {
+                get() { return this.metadata.colorConfig.kiyamuVision || 'standard'; },
+                set(value) { this.$set(this.metadata.colorConfig,'kiyamuVision',value); this.saveMetadata(this.metadata); }
+            },
+            kiyamuAppearanceMode: {
+                get() { return getSinhalaAppearanceMode(this.metadata); },
+                set(value) { this.$set(this.metadata.colorConfig,'kiyamuAppearance',value); this.saveMetadata(this.metadata); }
             }
         },
         methods: {

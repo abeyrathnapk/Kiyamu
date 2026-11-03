@@ -118,12 +118,31 @@ symbols.check = symbols.yes;
 symbols.eat = path('M13 88 Q13 61 37 61 Q61 61 61 88 Z', teal) + circle(37, 34, 23, peach) + dot(29, 29) + dot(43, 29) + circle(43, 45, 5, ink) + path('M59 45 L88 57', 'none', ink, 5) + path('M46 42 Q55 36 64 43 Q61 52 50 49 Z', gold);
 symbols['hand-paper'] = symbols.no;
 symbols['hands-helping'] = symbols.help;
+symbols.back = path('M26 31 A31 31 0 1 1 20 65', 'none', ink, 7) + path('M25 12 L25 34 L47 34', 'none', ink, 7);
 symbols['volume-up'] = path('M12 36 L29 36 L48 20 L48 77 L29 61 L12 61 Z', gold) + path('M62 35 Q75 48 62 62 M73 23 Q96 48 73 74', 'none', teal, 5);
 symbols.backspace = path('M32 22 L85 22 L85 75 L32 75 L9 48 Z', '#a7ddd3') + path('M46 36 L68 61 M68 36 L46 61', 'none', ink, 5);
 symbols.eraser = path('M13 59 L56 16 Q61 12 66 17 L85 36 Q89 41 84 46 L48 82 L35 82 Z', '#efae99') + path('M31 42 L64 65 M49 81 L87 81', 'none', ink, 4);
 
 // A negative answer is distinct from the stop/refusal hand symbol.
 symbols.negative = circle(48, 48, 34, '#f7ded8') + path('M33 33 L63 63 M63 33 L33 63', 'none', ink, 7);
+
+// Preserve exact previous built-ins for rendering existing boards without rewriting images.
+const previousSymbols = {...symbols};
+const stickPerson = (style = '', color = teal) => {
+    const skin = color === '#df8d61' || color === '#547e9c' ? '#b87b50' : peach;
+    const head = circle(48, 27, 15, skin, ink, 3);
+    const features = dot(43, 25, 1.7) + dot(53, 25, 1.7) + path('M43 33 Q48 37 53 33', 'none', ink, 2);
+    const hair = style === 'long' ? path('M32 34 L32 23 Q34 8 48 10 Q64 9 64 25 L64 35', 'none', ink, 3)
+        : style === 'elder' ? path('M34 19 Q48 5 62 19', 'none', '#a3a3a3', 4) + circle(42,25,5,'none',ink,1.5) + circle(54,25,5,'none',ink,1.5)
+        : '';
+    return path('M48 43 L48 65 M48 48 L27 60 M48 48 L69 60 M48 65 L33 85 M48 65 L63 85','none',ink,4) + head + features + hair;
+};
+const variants = [['',teal],['long',teal],['','#efae43'],['','#5b9dce'],['long','#efae43'],['','#df8d61'],['elder','#a57ba8'],['elder','#547e9c']];
+for (const key of Object.keys(symbols)) {
+    for (const [style,color] of variants) symbols[key] = symbols[key].split(person(style,color)).join(stickPerson(style,color));
+}
+symbols.go = circle(53,16,10,peach,ink,3) + path('M50 28 L39 51 L57 59 L65 84 M39 51 L24 81 M46 36 L26 46 M50 29 L65 42 L79 42','none',ink,4) + dot(56,15,1.8);
+symbols.eat = circle(32,24,14,peach,ink,3) + dot(36,22,2) + path('M36 31 L43 31 M32 39 L32 65 M32 65 L18 86 M32 65 L46 86 M32 46 L48 52 L59 34 M32 46 L17 57','none',ink,4) + path('M48 31 L66 31','none',ink,3) + circle(62,30,4,gold,ink,2) + '<g transform="translate(56 42) scale(.38)">' + bowl + '</g>';
 
 export const SINHALA_SYMBOL_NAMES = Object.keys(symbols);
 
@@ -134,4 +153,21 @@ export function getSinhalaSymbol(name) {
     }
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 96 96"><rect width="96" height="96" rx="12" fill="#fff"/>' + body + '</svg>';
     return 'data:image/svg+xml;base64,' + btoa(svg);
+}
+
+const previousToCurrent = new Map();
+for (const name of SINHALA_SYMBOL_NAMES) {
+    if(previousSymbols[name] === symbols[name]) continue;
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 96 96"><rect width="96" height="96" rx="12" fill="#fff"/>' + previousSymbols[name] + '</svg>';
+    previousToCurrent.set('data:image/svg+xml;base64,' + btoa(svg), getSinhalaSymbol(name));
+}
+/** Exact built-in matches only: custom drawings and photographs pass through untouched. */
+const transparentBuiltins = new Map(SINHALA_SYMBOL_NAMES.map(name => {
+    const data = getSinhalaSymbol(name);
+    const svg = atob(data.split(',')[1]).replace('<rect width="96" height="96" rx="12" fill="#fff"/>', '');
+    return [data, 'data:image/svg+xml;base64,' + btoa(svg)];
+}));
+export function getUpdatedSinhalaSymbol(data, whiteBacking = false) {
+    const current = previousToCurrent.get(data) || data;
+    return whiteBacking ? current : transparentBuiltins.get(current) || current;
 }

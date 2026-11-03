@@ -183,3 +183,5 @@ Other people and organizations we want to thank:
 ## License
 
 Asterics AAC and its source code are licensed under the [AGPL-3.0](./LICENSE). All documentation and non-source code in this repository are licensed under the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
+
+Sinhala colours and symbol personalisation: [English / සිංහල guide](docs/documentation_user/sinhala-colours-symbols.md).
